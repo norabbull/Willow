@@ -71,8 +71,7 @@ def load_SDVs(path):
     return raw_SDVs
 
 
-def load_GroupwiseSDRs(path):
+def load_groupwiseSDRs(path): return pd.read_csv(path)
     
-    df = pd.read_csv(path)
-    return df
+def load_groupwiseTotdists(path): return(pd.read_csv(path))
     

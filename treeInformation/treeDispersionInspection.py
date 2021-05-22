@@ -5,7 +5,8 @@ Created on Wed May 12 10:05:17 2021
 @author: norab
 """
 
-from inspection.loadTreeData import *
+from treeInformation.loadTreeData import *
+from treeInformation.getTreeInfo import *
 
 #%% Load single gene matrix
 
@@ -19,11 +20,11 @@ FGR_cd = load_cd_mat('E:/Master/cophenetic_dists/ENSG00000000938___FGR___CopD.cs
 #%% Load data
 
 # All data
-uniqseq = load_uniq_seqs()
-totdist = load_tot_dist()
+uniqseq = load_uniq_seqs('C:/Users/norab/MasterDisaster/Data/meta_data/9381_uniqseqs.txt')
+totdist = load_tot_dist('C:/Users/norab/MasterDisaster/Data/meta_data/totalDistancesRefined.txt')
 SDRs = load_SDRs('E:\Master\SDR\SDR_values_all.csv')
 SDVs = load_SDVs('E:\Master\SDV\SDV_values_all.csv')
-group_SDRs = read_SDR_allgroups('E:\Master\SDR\SDR_values_all_groups.csv')
+group_SDRs = load_groupwiseSDRs('E:\Master\SDR\SDR_values_all_groups.csv')
 
 # Small subset data
 group_SDRs = read_SDR_allgroups('C:/Users/norab/MasterDisaster/Data/SDR/SDR_values_subset.csv')
