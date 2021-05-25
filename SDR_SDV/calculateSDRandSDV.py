@@ -119,9 +119,9 @@ import treeInformation as ti
 #sample_info = getSampleInfo(cd_mat)
 
 
-#all_means = calcMeanGroupDists(cd_mat, cd_inds, group_names)
+#all_means = calcMeanGroupDists(cd_mat, sample_info, group_names)
 
-def calculateSDR(cd_mat, cd_inds, group_names, calc_SDRgroupwise = False):
+def calculateSDR(cd_mat, sample_info, group_names, calc_SDRgroupwise = False):
     """
     Input: 
         group_dists: Numpy arrayList of dataframes containing info of total group distances and
@@ -135,7 +135,7 @@ def calculateSDR(cd_mat, cd_inds, group_names, calc_SDRgroupwise = False):
         Float: overall mean of distances for classification type        
     """
 
-    group_dists = ti.calcMeanGroupDists(cd_mat, cd_inds, group_names)
+    group_dists = ti.calcMeanGroupDists(cd_mat, sample_info, group_names)
     
     if calc_SDRgroupwise:
         SDR_subPops = group_dists['subWith']['group_mean'].divide(group_dists['subBet']['group_mean'])

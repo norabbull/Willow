@@ -7,15 +7,26 @@ Created on Sat May 22 10:59:48 2021
 
 import re
 import pandas as pd
+from treeInformation.getTreeInfo import *
 
-def load_cd_mat(file):
+def load_groupTypeSets(path):
+    """
+    Input: Filepath to population informtaion
+    Output: Sets 
+
+    """
+    return createGroupTypeSets(path)
+    
+    
+
+def load_cd_mat(path):
     """
     Input: 
         Filepath to one cd matrix
     Return: 
         matrix of pairwise distances
     """
-    cd = pd.read_csv(file, index_col = 0)
+    cd = pd.read_csv(path, index_col = 0)
     return cd
 
 def load_uniq_seqs(path):
@@ -46,6 +57,7 @@ def load_tot_dist(path):
     return totdist
 #totdist_dir = "C:/Users/norab/MasterDisaster/Data/meta_data/totalDistancesRefined.txt"
 
+
 def load_SDRs(path):
     """ 
     Input: None
@@ -70,8 +82,12 @@ def load_SDVs(path):
     raw_SDVs.rename(index=lambda s: re.sub('^.*.*ENS', 'ENS', s), inplace = True)
     return raw_SDVs
 
-
-def load_groupwiseSDRs(path): return pd.read_csv(path)
+def load_groupSDRs(path): 
+    return pd.read_csv(path)
     
-def load_groupwiseTotdists(path): return(pd.read_csv(path))
+def load_groupTotdists(path): 
+    return(pd.read_csv(path))
+
+def load_allData(path):
+    return(pd.read_csv(path, index_col=0))
     

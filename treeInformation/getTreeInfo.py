@@ -9,6 +9,9 @@ import pandas as pd
 from SDR_SDV import *
 from treeInformation.loadTreeData import *
 import re
+from os import listdir
+from os.path import isfile, join
+import csv   
 #from SDR_SDV import calculateSDRandSDV
 
 
@@ -64,8 +67,9 @@ def getSampleInfo(cd_mat):
     
     return sample_info
 
+#%% 
 def calcMeanGroupDists(cd_mat, 
-                       cd_inds, 
+                       sample_info, 
                        group_names):
     """
     Calculate mean inter and intra population distances
@@ -73,7 +77,7 @@ def calcMeanGroupDists(cd_mat,
     These are merged into one function for efficiency reasons.
     
     cd_mat = matrix containing cophenetic distances
-    cd_inds = indices of sample names 
+    sample_info = indices of sample names 
     group_names = list of sets with population names. 
                 Index 0 = super, index 1 = sub 
 
@@ -93,10 +97,10 @@ def calcMeanGroupDists(cd_mat,
             row_i = row + i
             
             # Get groupName
-            supName1 = cd_inds[col][1]
-            supName2 = cd_inds[row_i][1]
-            subName1 = cd_inds[col][2]
-            subName2 = cd_inds[row_i][2]
+            supName1 = sample_info[col][1]
+            supName2 = sample_info[row_i][1]
+            subName1 = sample_info[col][2]
+            subName2 = sample_info[row_i][2]
             
             val = cd_mat[row_i][col]        # Distance value
 # =============================================================================
@@ -180,6 +184,8 @@ def calcNonZerosForSamples(cd_mat,
     
     return nonZero_row
 
+# test = calcNonZerosForSamples(MPP5_cd, percent=False)
+# test2 = calcNonZeroTotal(MPP5_cd,)
 
 def calcNonZerosForGroups(cd_mat_path,
                          popTypeSet, 
@@ -201,14 +207,13 @@ def calcNonZerosForGroups(cd_mat_path,
         create popTypeSet and groups with functions within this function.
         Have to fix imports and project structure first. 
     """
-    cd_mat = load_cd_mat(cd_mat_path)
-    # get sample info
+    cd_mat = load_cd_mat(cd_mat_path)   
     sample_info = getSampleInfo(cd_mat)
     
     # find total sample cells in matrix
     sampleCount = pd.DataFrame(countGroupSamples(sample_info, classificationType=classificationType))
-    sampleCount['total'] = (sampleCount['sampleCount'] * cd_mat.shape[0]) - sampleCount['sampleCount']
-
+    sampleCount['totalPopComp'] = (sampleCount['sampleCount'] * cd_mat.shape[0]) - sampleCount['sampleCount']    
+    
     # Make dict counter for pops
     if classificationType=='super':
         sup_sums = {pop : 0 for pop in popTypeSet[0]}   # Placeholder for sum values
@@ -238,11 +243,9 @@ def calcNonZerosForGroups(cd_mat_path,
     else: 
         raise ValueError("Invalid calssification type. ")
         
-    # restructure sample_info #obs: in future, u might wanna do this change 
-    # in its implementation
     # map nonZero and sample_info together into matrix
-    nonZeros = calcNonZerosForSamples(cd_mat, percent = True)
-
+    
+    nonZeros = calcNonZerosForSamples(cd_mat, percent = True)  
     if classificationType == 'all':
         nonZeros['supPop'] = nonZeros.index.map(sup_sample_info)
         nonZeros['subPop'] = nonZeros.index.map(sub_sample_info)
@@ -257,20 +260,15 @@ def calcNonZerosForGroups(cd_mat_path,
     else: 
         raise ValueError("This option is not yet available")
         
-        
-    # loop nonZeros and add values to sums dict
-    
-        #sub_sums[val[3]]
-    # Now: divide non-zero values for pop on total pop compariosns
-    
-    sampleCount['sums'] = sampleCount.index.map(sums)
-    sampleCount['percentNonZeroForPop'] = sampleCount.sums / sampleCount.total
-    sampleCount['geneName'] = getGeneName(cd_mat_path)
+    # Divide non-zero values for pop on total pop compariosns    
+    sampleCount['popSums'] = sampleCount.index.map(sums)
+    sampleCount['percentNonZeroForPop'] = sampleCount.popSums / sampleCount.totalPopComp
+    sampleCount['gene'] = getGeneName(cd_mat_path)
     
     return sampleCount
 
 
-def run_CalcNonZeroForGroup(input_path, 
+def run_CalcNonZeroForGroup(cd_path, 
                             output_path,
                             group_info_path):
     """
@@ -285,10 +283,10 @@ def run_CalcNonZeroForGroup(input_path,
     pop_type_sets = createGroupTypeSets(group_info_path)
     
     # List of files
-    if isinstance(cd, str):     
-        file_list = [join(cd, f) for f in listdir(cd) if isfile(join(cd, f))]
+    if isinstance(cd_path, str):     
+        file_list = [join(cd_path, f) for f in listdir(cd_path) if isfile(join(cd_path, f))]
     else:            # Continue from disruption
-        file_list = cd.copy()
+        file_list = cd_path.copy()
 
     ind = 0
     print("Files to process:\n", file_list)
@@ -303,17 +301,11 @@ def run_CalcNonZeroForGroup(input_path,
                                 popTypeSet=pop_type_sets, 
                                 classificationType='all',
                                 percent = True)
-
-    
-        SDRs = SDRs[0].append(SDRs[1]).to_frame()
-        gene_name = ti.getGeneName(cd_file)
-        SDRs = SDRs.assign(gene = [gene_name] * SDRs.shape[0])
-
-        with open(SDR_outputfile, 'a') as f:
-            SDRs.to_csv(SDR_outputfile, mode = 'a', index_label = 'pop', header=f.tell()==0)                
-
+            with open(output_path, 'a') as f:
+                result.to_csv(output_path, mode = 'a', index_label = 'pop', header=f.tell()==0)
+            ind += 1
     except: 
-        print("HALLO")
+        print("Disrupted. Something wrong.. ")
 
 #%% 
 
@@ -352,10 +344,11 @@ def countGroupSamples(sample_info, classificationType = 'super'):
 
 
 #%% Tests
-sample_info = getSampleInfo(cd_mat)
-test = countGroupSamples(sample_info, classificationType='all')
-test = calcNonZerosForSamples(FGR_cd)
-test = calcNonZeroTotal(FGR_cd)
+# cd_mat_path = 'E:/Master/cophenetic_dists/ENSG00000000938___FGR___CopD.csv'
+# cd_mat = load_cd_mat(cd_mat_path)
+# sample_info = getSampleInfo(cd_mat)
+# test = countGroupSamples(sample_info, classificationType='all')
+
 
 #%% run
 
@@ -367,26 +360,32 @@ if __name__ == '__main__':
 # =============================================================================
 
     # cd_mat
-    
     cd_mat_path = 'E:/Master/cophenetic_dists/ENSG00000000938___FGR___CopD.csv'
     # pop_
     group_type_sets = createGroupTypeSets('C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv')
     
-    # run function
+    # test calcNonZerosForGroups
     test = calcNonZerosForGroups(cd_mat_path, 
                                 popTypeSet=group_type_sets, 
                                 classificationType='all',
                                 percent = True)
     
+    # Small subset for testing run_CalcNonZerosForGroup
+    cd_path = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/cophenetic_dists/'
+    output_path = 'C:/Users/norab/MasterDisaster/Data/meta_data/group_totdists_subset.csv'
+    group_info_path = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
     
-    # Calculate groupwise nonZero totdist for all cd_mats
+    # True folders for run_CalcNonZerosForGroup
+    cd_dir_redhood = 'E:/Master/cophenetic_dists/'
+    output_path_redhood = 'E:/Master/otherTreeData/group_totdists_all.csv'
+    group_info_path = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+    
 
-# YOU STOPPED HERE: 
-    # Fixed calcNonZerosForGroups to calculate for all populations instead of only 
-    # super or sub. Can now map the returned matrix to SDR groups and plot :D 
-    # 
-
-
+    # test run_calcNonZerosForGroups
+    run_CalcNonZeroForGroup(cd_dir_redhood,  # Trenger testdir med noen filer 
+                            output_path_redhood,
+                            group_info_path)
+    
 
 
 
