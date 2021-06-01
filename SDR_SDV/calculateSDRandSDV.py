@@ -110,8 +110,7 @@ Created on Thu May  6 11:33:03 2021
 from os import listdir
 from os.path import isfile, join
 import csv   
-import treeInformation as ti
-
+from treeInformation.getTreeInfo import *
 #file = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/cophenetic_dists/ENSG00000001167___NFYA___CopD.csv'
 #cd_mat = readCDgene(file)
 
@@ -119,9 +118,9 @@ import treeInformation as ti
 #sample_info = getSampleInfo(cd_mat)
 
 
-#all_means = calcMeanGroupDists(cd_mat, sample_info, group_names)
+#all_means = calcMeanGroupDists(cd_mat, sample_info, group_types
 
-def calculateSDR(cd_mat, sample_info, group_names, calc_SDRgroupwise = False):
+def calculateSDR(cd_mat, sample_info, group_types, calc_SDRgroupwise = False):
     """
     Input: 
         group_dists: Numpy arrayList of dataframes containing info of total group distances and
@@ -135,7 +134,7 @@ def calculateSDR(cd_mat, sample_info, group_names, calc_SDRgroupwise = False):
         Float: overall mean of distances for classification type        
     """
 
-    group_dists = ti.calcMeanGroupDists(cd_mat, sample_info, group_names)
+    group_dists = calcMeanGroupDists(cd_mat, sample_info, group_types)
     
     if calc_SDRgroupwise:
         SDR_subPops = group_dists['subWith']['group_mean'].divide(group_dists['subBet']['group_mean'])
@@ -211,7 +210,7 @@ def runSDRorSDVpipe(cd,
     """
     
     # Population information
-    pop_type_sets = ti.createGroupTypeSets(group_info)
+    pop_type_sets = createGroupTypeSets(group_info)
     
     # List of files
     if isinstance(cd, str):     
@@ -228,8 +227,8 @@ def runSDRorSDVpipe(cd,
             print("File processed: ", cd_file)
             print("Number: ", ind)
     
-            cd_mat = ti.readCDgene(cd_file)                # read cd matrix
-            sample_info = ti.getSampleInfo(cd_mat)       # get sample info
+            cd_mat = readCDgene(cd_file)                # read cd matrix
+            sample_info = getSampleInfo(cd_mat)       # get sample info
             
             # all_means = calcMeanGroupDists(cd_mat,          # calculate all mean dists
             #                          sample_info,       # between pop types
@@ -243,14 +242,14 @@ def runSDRorSDVpipe(cd,
                 
                 if calc_SDRgroupwise: 
                     SDRs = SDRs[0].append(SDRs[1]).to_frame()
-                    gene_name = ti.getGeneName(cd_file)
+                    gene_name = getGeneName(cd_file)
                     SDRs = SDRs.assign(gene = [gene_name] * SDRs.shape[0])
 
                     with open(SDR_outputfile, 'a') as f:
                         SDRs.to_csv(SDR_outputfile, mode = 'a', index_label = 'pop', header=f.tell()==0)                
 
                 else:                      
-                    SDRs = SDRs.insert(0, ti.getGeneName(cd_file))
+                    SDRs = SDRs.insert(0, getGeneName(cd_file))
 
                     with open(SDR_outputfile, 'a', newline='') as f:   # write to file    
                         writer = csv.writer(f)
@@ -264,7 +263,7 @@ def runSDRorSDVpipe(cd,
                                          calc_SDRgroupwise=calc_SDRgroupwise)
                 
                 SDVs = calculateSDV(SDRgroupwise)
-                SDVs.insert(0,ti.getGeneName(cd_file))
+                SDVs.insert(0,getGeneName(cd_file))
 
                 with open(SDV_outputfile, 'a', newline='') as f:   # write to file
                     writer = csv.writer(f)

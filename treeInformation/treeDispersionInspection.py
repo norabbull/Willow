@@ -7,6 +7,7 @@ Created on Wed May 12 10:05:17 2021
 
 from treeInformation.loadTreeData import *
 from treeInformation.getTreeInfo import *
+from SDR_SDV.calculateSDRandSDV import *
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -33,6 +34,14 @@ LY96_cd = load_cd_mat('E:/Master/cophenetic_dists/ENSG00000154589___LY96___CopD.
 LY96_data = all_data1[all_data1['gene'] == 'ENSG00000154589___LY96']
 LY96_data = all_data5[all_data5['gene'] == 'ENSG00000154589___LY96']
 
+# Something strang. Inspect: 
+
+    # calculate groupwise SDR for gene
+ly96_inf= getSampleInfo(LY96_cd)
+grouptypes = getGroupTypes('C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv')
+ly96_SDRs = calculateSDR(LY96_cd,ly96_inf,grouptypes)
+ly96_SDRs_pops = calculateSDR(LY96_cd,ly96_inf,grouptypes,calc_SDRgroupwise=True)
+
 #%% Load data
 
 # All data
@@ -50,7 +59,7 @@ all_data = load_allData('C:/Users/norab/MasterDisaster/Data/real_tree_data/allTr
 group_SDRs = load_groupSDRs('C:/Users/norab/MasterDisaster/Data/SDR/SDR_values_subset.csv')
 group_totdists = load_groupTotdists('C:/Users/norab/MasterDisaster/Data/meta_data/group_totdists_subset.csv')
 
-
+test = group_SDRs[group_SDRs['gene'] == 'ENSG00000154589___LY96']
 
 #%% Filter all_data: 
     
@@ -253,10 +262,6 @@ genes
 genes07.to_csv('C:/Users/norab/MasterDisaster/Data/go_enrichment/superSDRgenes07.csv', index = False)
 geneUniverse.to_csv('C:/Users/norab/MasterDisaster/Data/go_enrichment/geneUniverse.csv', index = False)
 # 
-
-
-
-
 
 
 
