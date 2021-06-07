@@ -57,20 +57,20 @@ for col in range(row_length):
 
 9 + 8 + 7 + 6 + 5 + 4 + 3 + 2 + 1 
 
-        row_length = len(dist_mat-1)
-        for col in range(len(dist_mat)-1):
-            row_start = 1
-            for row in range(row_start, row_length):
-                sample1 = col
-                sample2 = row_start
-                
-                # Get popName
-                supPop1 = self.sample_info[sample1][1]
-                supPop2 = self.sample_info[sample2][1]
-                subPop1 = self.sample_info[sample1][2]
-                subPop2 = self.sample_info[sample2][2]
-                
-                val = dist_mat[sample2][sample1]        # Distance value
+row_length = len(dist_mat-1)
+for col in range(len(dist_mat)-1):
+    row_start = 1
+    for row in range(row_start, row_length):
+        sample1 = col
+        sample2 = row_start
+        
+        # Get popName
+        supPop1 = self.sample_info[sample1][1]
+        supPop2 = self.sample_info[sample2][1]
+        subPop1 = self.sample_info[sample1][2]
+        subPop2 = self.sample_info[sample2][2]
+        
+        val = dist_mat[sample2][sample1]        # Distance value
                 
                 
 row_start = 3
@@ -81,4 +81,15 @@ for row in range(row_start, row_length):
     #print("s1",sample1)
     print("s2",sample2)
     print("row",row)
-                
+    
+    
+liste = [0.4000005, 5.1, 3.2]
+liste[0] = round(liste[0], 4)
+
+def play():
+    k = 1
+    r = 2
+    
+    return k, r
+
+i, j = play()

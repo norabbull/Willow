@@ -105,16 +105,21 @@ class TestTreeFunctions(unittest.TestCase):
         
         AFR_test = pop_dists['supWithSums']['AFR']; AFR_test[0] = round(AFR_test[0], 6)
         EUR_test = pop_dists['supBetSums']['EUR']; EUR_test[0] = round(EUR_test[0], 6)
-                
+        LWK_test = pop_dists['subWithSums']['LWK']; LWK_test[0] = round(LWK_test[0], 6)
+        CLM_test = pop_dists['subBetSums']['CLM']; CLM_test[0] = round(CLM_test[0], 6)
+        
         # Manual calculations retrieved from visual inspection of dist_mat
         supWithSum_AFR = round(0.00236 + 0.00354 + 0.0059 + 0.00472 + 0.00118 + 
                                0.00354 + 0.00236 + 0.00236 + 0.00118 + 0.00118, 6)
         supBetSum_EUR = round(4*0.00236 + 4*0 + 4*(0.00118 + 0.00354 + 2*0.00236), 6)
-        
+        subWithSum_LWK = round(0.00236 + 0.0059 + 0.00354, 6)
+        subBetSum_CLM = round(0.00472 + 5*0.00236 + 2*0.00118 + 0, 6)
+
         assert AFR_test == [supWithSum_AFR, 10]  # 5 AFR samples, 10 comparisons
         assert EUR_test == [supBetSum_EUR, 24]   # 4 EUR samples, 24 comparisons
+        assert LWK_test == [subWithSum_LWK, 3]   # 3 LWK samples, 3 comparisons
+        assert CLM_test == [subBetSum_CLM, 9]    # 1 CLM sample, 9 comparisons 
 
-test_calcPopDists()
 
 
 #%% 
@@ -126,10 +131,18 @@ test_calcPopDists()
         tree = treeInfo()
         tree.setup(test_gene_small, pop_info)
         mat = tree.getDistMat()
-        pop_dists = tree.calcPopDists() 
-        supWithSum_AFR = 0.00236 + 0.00354 + 0.0059 + 0.00472 + 0.00118 + 0.00354 + 0.00236 + 0.00236 + 0.00118 + 0.00118
+        #dists, counts = tree.calcMeanPopDists()
         
-        assert (pop_dists['supWithSums']['AFR'][0] / pop_dists['supWithSums']['AFR'][1]) == supWithSum_AFR / 10
+        supWith_count = 10 + 6  # AFR and EUR
+        subWith_count = 3 + 6   # LWK and GBR
+        
+        #assert supWith_count == counts['supWith']
+        #assert subWith_count == counts['subWith']
+        
+        # TO DO when tired: 
+        # manually add dists from dists mat to check if corresponds to
+        # values coming from calcMeanPopDists().
+
         
 
 

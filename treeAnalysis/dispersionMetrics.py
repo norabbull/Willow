@@ -130,7 +130,7 @@ class treeDispersion(treeInfo):
         self.popSDRs = None
         
         
-    def calculateSDR(self,calc_SDRgroupwise = False):
+    def calculateSDR(self):
         """
         Input: 
             group_dists: Numpy arrayList of dataframes containing info of total group distances and
@@ -143,9 +143,29 @@ class treeDispersion(treeInfo):
         Return:
             Float: overall mean of distances for classification type        
         """
-    
-        self.calcMeanGroupDists(self.dist_mat, self.sample_info, self.group_info)
         
+        self.calcMeanPopDists()
+        return self.meanPopDists
+        # tot_means = {}
+        # # Calculate for overall group
+        # for groupType, summary_df in group_dists.items():
+        #     tot_means[groupType] = sum(summary_df['total_distance'])/sum(summary_df['counts'])
+        
+        if not (self.meanPopDists == 0):
+            superSDR = round(tot_means['supWith'] / tot_means['supBet'], 4)
+        else: 
+            superSDR = 1
+        
+        if not (tot_means['subBet'] == 0):
+            subSDR = round(tot_means['subWith'] / tot_means['subBet'],4)
+        else: 
+            subSDR = 1
+            
+        return [superSDR, subSDR] # Obs, order of these are 
+    
+    #test_SDR = calculateSDR(all_means, calc_SDRgroupwise=True)
+    
+    def calculatePopSDRs(self):
         if calc_SDRgroupwise:
             SDR_subPops = group_dists['subWith']['group_mean'].divide(group_dists['subBet']['group_mean'])
             SDR_supPops = group_dists['supWith']['group_mean'].divide(group_dists['supBet']['group_mean'])
@@ -162,27 +182,6 @@ class treeDispersion(treeInfo):
             
             return [SDR_supPops, SDR_subPops]
     
-      
-        tot_means = {}
-        # Calculate for overall group
-        for groupType, summary_df in group_dists.items():
-            tot_means[groupType] = sum(summary_df['total_distance'])/sum(summary_df['counts'])
-    
-        if not (tot_means['supBet'] == 0):
-            superSDR = round(tot_means['supWith'] / tot_means['supBet'], 4)
-        else: 
-            superSDR = 1
-        
-        if not (tot_means['subBet'] == 0):
-            subSDR = round(tot_means['subWith'] / tot_means['subBet'],4)
-        else: 
-            subSDR = 1
-            
-        
-        
-        return [superSDR, subSDR] # Obs, order of these are 
-    
-    #test_SDR = calculateSDR(all_means, calc_SDRgroupwise=True)
     
     def calculateSDV(SDRs):
         """

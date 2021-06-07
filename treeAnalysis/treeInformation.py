@@ -30,7 +30,8 @@ class treeInfo:
         self.sub_pops = None
         self.sample_info = None
         self.gene_name = None
-        self.meanpopDists = None
+        self.meanPopDists = None
+        self.meanTypeDists = None
         
     
     def setup(self, dist_mat_file, pop_info_file):
@@ -83,7 +84,7 @@ class treeInfo:
         in list as value: [gene name, super pop name, sub pop name]
         
         Reason for numerical indices: Can use to iterate triangular matrix in 
-        calcPopDists
+        calcTypeDists
         """
         self.sample_info = {}
         
@@ -159,49 +160,37 @@ class treeInfo:
         
         
         # TO DO: Write test to check these values are correct for a small matrix
-        return {'supWithSums': supWithSums, 'supBetSums': supBetSums, 
-                'subWithSums': subWithSums, 'subBetSums': subBetSums}
+        return {'supWith': supWithSums, 'supBet': supBetSums, 
+                'subWith': subWithSums, 'subBet': subBetSums}
 
 
         
     def calcMeanPopDists(self):
-
+        """
+        Question I repeatedly ask myself: 
+            Should I add all and divide by total count or find mean of 
+            the individual populations first before adding the means and 
+            do a mean of means? 
+        """
         pop_dists = self.calcPopDists()
         
-        mean_summary = {'supBetMean':0, 'supWithMean':0, 'subBetMean':0, 'subWithMean':0}
-        mean_summary = {}
-        
-        # Calculate means
-        
-        # Hva du skal: 
-            # For hver dict i pop_dist dict, del 
+        dist_summary = {'supBet':0, 'supWith':0, 'subBet':0, 'subWith':0}
+        count_summary = {'supBet':0, 'supWith':0, 'subBet':0, 'subWith':0}
         
         for key, val in pop_dists.items():
-            for pop, dist_count in val:
-                mean_summary[key] = dist_count[0] / dist_count[1]
+            for pop, dist_count in val.items():
+                dist_summary[key] += dist_count[0]
+                count_summary[key] += dist_count[1]
         
-        return mean_summary
+        mean_summary = {key: round(dist_summary[key] / count_summary[key], 8) for key, val
+                        in dist_summary.items()}
         
-    # test this now
+        self.meanPopDists = mean_summary
         
-        # for ind, sum_dict in enumerate(pop_dicts):
-        #     sum_df = pd.DataFrame.from_dict(sum_dict, orient = "index", columns = ['total_distance', 'counts'])        
-        #     sum_df['pop_mean'] = sum_df.apply(lambda row: 
-        #                                       row.total_distance / 
-        #                                       row.counts 
-        #                                       if row.counts > 0 
-        #                                       else 0, axis = 1)
-            
-        #     mean_summary[list(mean_summary.keys())[ind]] = sum_df
-        
-        # # TO DO: Write test where you put in a small matrix and check
-        # # if summary values so far are correct
-        
-        # self.meanPopDists = mean_summary
     
     def getMeanPopDists(self): 
-        if self.meanGroupDists is None: self.calcMeanGroupDists()
-        return self.meanGroupDists
+        if self.meanPopDists is None: self.calcmeanPopDists()
+        return self.meanPopDists
     
     def getSampleInfo(self): 
         if self.sample_info is None: self.setSampleInfo()
