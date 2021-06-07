@@ -110,7 +110,7 @@ Created on Thu May  6 11:33:03 2021
 from os import listdir
 from os.path import isfile, join
 import csv   
-import 
+import treeInfo
 #file = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/cophenetic_dists/ENSG00000001167___NFYA___CopD.csv'
 #cd_mat = readCDgene(file)
 
@@ -119,7 +119,7 @@ import
     
     
     #all_means = calcMeanGroupDists(cd_mat, sample_info, group_types
-class treeDispersion(treeData):
+class treeDispersion(treeInfo):
     
     def __init__(self):
         
@@ -130,7 +130,7 @@ class treeDispersion(treeData):
         self.popSDRs = None
         
         
-    def calculateSDR(cd_mat, sample_info, group_types, calc_SDRgroupwise = False):
+    def calculateSDR(self,calc_SDRgroupwise = False):
         """
         Input: 
             group_dists: Numpy arrayList of dataframes containing info of total group distances and
@@ -144,7 +144,7 @@ class treeDispersion(treeData):
             Float: overall mean of distances for classification type        
         """
     
-        group_dists = calcMeanGroupDists(cd_mat, sample_info, group_types)
+        self.calcMeanGroupDists(self.dist_mat, self.sample_info, self.group_info)
         
         if calc_SDRgroupwise:
             SDR_subPops = group_dists['subWith']['group_mean'].divide(group_dists['subBet']['group_mean'])
@@ -195,98 +195,6 @@ class treeDispersion(treeData):
     
     #SDVs = calculateSDV(test_SDR)
               
-    def runSDRorSDVpipe(cd, 
-                        group_info, 
-                        unprocessed_files, 
-                        SDR_outputfile=None, 
-                        SDV_outputfile=None, 
-                        calc_SDRgroupwise = False):
-        """
-        Input: 
-            cd_files: path to files containing cophenetic distance matrices
-            group_info: path to population classes information file
-            output_path: path to file SDR values are to be written to. 
-            unprocessed_files_path: path to file for saving list of unproccessed file upon disruption
-            
-        Function: 
-            Pipeline of function for SDR calculations. 
-            Writes SDR values to file with specified gene name.
-            
-            If function is disrupted, a list of the remaining files to 
-            calculate SDR for from the filelist is written to a file. 
-        
-        Output: 
-            Writes SDR to file.         
-        """
-        
-        # Population information
-        pop_type_sets = createGroupTypeSets(group_info)
-        
-        # List of files
-        if isinstance(cd, str):     
-            file_list = [join(cd, f) for f in listdir(cd) if isfile(join(cd, f))]
-        else:            # Continue from disruption
-            file_list = cd.copy()
-    
-        ind = 0
-        print("Files to process:\n", file_list)
-        
-        try:
-            while file_list:
-                cd_file = file_list.pop().strip()
-                print("File processed: ", cd_file)
-                print("Number: ", ind)
-        
-                cd_mat = readCDgene(cd_file)                # read cd matrix
-                sample_info = getSampleInfo(cd_mat)       # get sample info
-                
-                # all_means = calcMeanGroupDists(cd_mat,          # calculate all mean dists
-                #                          sample_info,       # between pop types
-                #                          pop_type_sets)
-                #SDR
-                if SDR_outputfile:
-                    SDRs = calculateSDR(cd_mat, 
-                                        sample_info, 
-                                        pop_type_sets, 
-                                        calc_SDRgroupwise = calc_SDRgroupwise)
-                    
-                    if calc_SDRgroupwise: 
-                        SDRs = SDRs[0].append(SDRs[1]).to_frame()
-                        gene_name = getGeneName(cd_file)
-                        SDRs = SDRs.assign(gene = [gene_name] * SDRs.shape[0])
-    
-                        with open(SDR_outputfile, 'a') as f:
-                            SDRs.to_csv(SDR_outputfile, mode = 'a', index_label = 'pop', header=f.tell()==0)                
-    
-                    else:                      
-                        SDRs = SDRs.insert(0, getGeneName(cd_file))
-    
-                        with open(SDR_outputfile, 'a', newline='') as f:   # write to file    
-                            writer = csv.writer(f)
-                            writer.writerow(SDRs)
-                
-                # SDV
-                if SDV_outputfile:
-                    SDRgroupwise = calculateSDR(cd_mat,
-                                             sample_info, 
-                                             pop_type_sets, 
-                                             calc_SDRgroupwise=calc_SDRgroupwise)
-                    
-                    SDVs = calculateSDV(SDRgroupwise)
-                    SDVs.insert(0,getGeneName(cd_file))
-    
-                    with open(SDV_outputfile, 'a', newline='') as f:   # write to file
-                        writer = csv.writer(f)
-                        writer.writerow(SDVs)
-                ind += 1       
-         
-        except: 
-            # Write remaining filelist to file
-            print("Disrupted.")
-            print("Last file processed:", cd_file)
-            with open(unprocessed_files, 'w', newline='') as f:
-                   writer = csv.writer(f)
-                   writer.writerow(file_list)
 
 
 #%% Run

@@ -113,5 +113,5 @@ if __name__ == "__main__":
     SDRs_path = 'E:\Master\SDR\SDR_values_all.csv'
     test = forestInfo()
     test = test.loadForestSDRs(path = SDRs_path)
-    test.
+
         
