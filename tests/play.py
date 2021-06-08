@@ -81,7 +81,12 @@ for row in range(row_start, row_length):
     #print("s1",sample1)
     print("s2",sample2)
     print("row",row)
-    
+
+k = 0.0
+if k: 
+    print("hey")
+else: 
+    print("yey")
     
 liste = [0.4000005, 5.1, 3.2]
 liste[0] = round(liste[0], 4)
@@ -93,3 +98,7 @@ def play():
     return k, r
 
 i, j = play()
+
+k = None
+
+liste = []

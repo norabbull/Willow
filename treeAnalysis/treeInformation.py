@@ -23,16 +23,15 @@ class treeInfo:
         pop_info = list of sets with population names.Index 0 = super, index 1 = sub 
 
         """
-
         self.dist_mat = None
         self.pop_info = None
         self.super_pops = None
         self.sub_pops = None
         self.sample_info = None
         self.gene_name = None
-        self.meanPopDists = None
-        self.meanTypeDists = None
-        
+        self.pop_dists = None
+        self.mean_pop_dists = None
+        self.mean_type_dists = None
     
     def setup(self, dist_mat_file, pop_info_file):
         self.setDistMat(dist_mat_file)
@@ -53,7 +52,7 @@ class treeInfo:
             Both Ensembl and gene name identifiers included on the form: 
                 'ENSG00000000938___FGR'
         """
-        subName = re.sub('^.:.*/ENS', 'ENS', dist_mat_file)
+        subName = re.sub('^.:.*ENS', 'ENS', dist_mat_file)
         self.gene_name = re.sub('___CopD.csv$','', subName)
     
     def setPopInfo(self, pop_info_file):
@@ -135,7 +134,7 @@ class treeInfo:
                     # Sub
                     subWithSums[subPop1] = [i+j for i, j in zip(subWithSums[subPop1], [val, 1])] 
     # =============================================================================
-    #             Between and within
+    #             Within and Between
     # =============================================================================
                 elif supPop1 == supPop2:      # Same super pop, different sub-pop
                     # Super within
@@ -157,40 +156,65 @@ class treeInfo:
                     subBetSums[subPop2] = [i+j for i, j in zip(subBetSums[subPop2], [val, 1])]
             row_start += 1
             
-        
-        
+
         # TO DO: Write test to check these values are correct for a small matrix
-        return {'supWith': supWithSums, 'supBet': supBetSums, 
+        self.pop_dists = {'supWith': supWithSums, 'supBet': supBetSums, 
                 'subWith': subWithSums, 'subBet': subBetSums}
 
 
         
-    def calcMeanPopDists(self):
+    def calcMeanTypeDists(self):
         """
         Question I repeatedly ask myself: 
             Should I add all and divide by total count or find mean of 
             the individual populations first before adding the means and 
             do a mean of means? 
         """
-        pop_dists = self.calcPopDists()
+        if not self.pop_dists: self.calcPopDists()
         
         dist_summary = {'supBet':0, 'supWith':0, 'subBet':0, 'subWith':0}
         count_summary = {'supBet':0, 'supWith':0, 'subBet':0, 'subWith':0}
         
-        for key, val in pop_dists.items():
+        for key, val in self.pop_dists.items():
             for pop, dist_count in val.items():
                 dist_summary[key] += dist_count[0]
                 count_summary[key] += dist_count[1]
         
-        mean_summary = {key: round(dist_summary[key] / count_summary[key], 8) for key, val
-                        in dist_summary.items()}
+        self.mean_type_dists = {key: round(dist_summary[key] / count_summary[key], 8) 
+                                for key, val in dist_summary.items()}
         
-        self.meanPopDists = mean_summary
         
+        
+    def calcMeanPopDists(self):
+        
+        if not self.pop_dists: self.calcPopDists()
+        
+        mean_pop_dists = {}
+        
+        for key, val in self.pop_dists.items():
+            type_means = {}
+            
+            for pop, dist_count in val.items():
+                if dist_count[1]:
+                    type_means[pop] = round(dist_count[0] / dist_count[1], 6)
+                else: 
+                    type_means[pop] = 0
+             
+            mean_pop_dists[key] = type_means
+             
+        self.mean_pop_dists = mean_pop_dists
+        
+    def getPopDists(self):
+        if not self.pop_dists: self.calcPopDists()
+        return self.pop_dists
     
+    def getMeanTypeDists(self):
+        if not self.mean_type_dists: self.calcMeanTypeDists()
+        return self.mean_type_dists
+        
     def getMeanPopDists(self): 
-        if self.meanPopDists is None: self.calcmeanPopDists()
-        return self.meanPopDists
+        if not self.mean_pop_dists: self.calcMeanPopDists()
+        return self.mean_pop_dists
     
     def getSampleInfo(self): 
         if self.sample_info is None: self.setSampleInfo()
@@ -199,6 +223,7 @@ class treeInfo:
     def getPopInfo(self): return self.pop_info
     def getGeneName(self): return self.gene_name
     def getDistMat(self): return self.dist_mat 
+    
     
     def calcNonZeroTotal(self, 
                          dist_mat, 

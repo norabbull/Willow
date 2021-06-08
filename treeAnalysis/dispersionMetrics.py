@@ -110,7 +110,8 @@ Created on Thu May  6 11:33:03 2021
 from os import listdir
 from os.path import isfile, join
 import csv   
-import treeInfo
+import pandas as pd
+from treeAnalysis.treeInformation import treeInfo
 #file = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/cophenetic_dists/ENSG00000001167___NFYA___CopD.csv'
 #cd_mat = readCDgene(file)
 
@@ -124,13 +125,15 @@ class treeDispersion(treeInfo):
     def __init__(self):
         
         
-        self.treeSDRsuper = None
-        self.treeSDRsub = None
+        self.SDRsuper = None
+        self.SDRsub = None
         self.treeSDVs = None
         self.popSDRs = None
         
+        treeInfo.__init__(self)
         
-    def calculateSDR(self):
+        
+    def calcSDR(self):
         """
         Input: 
             group_dists: Numpy arrayList of dataframes containing info of total group distances and
@@ -144,46 +147,52 @@ class treeDispersion(treeInfo):
             Float: overall mean of distances for classification type        
         """
         
-        self.calcMeanPopDists()
-        return self.meanPopDists
-        # tot_means = {}
-        # # Calculate for overall group
-        # for groupType, summary_df in group_dists.items():
-        #     tot_means[groupType] = sum(summary_df['total_distance'])/sum(summary_df['counts'])
-        
-        if not (self.meanPopDists == 0):
-            superSDR = round(tot_means['supWith'] / tot_means['supBet'], 4)
+        # Dette blir feil. Du tar gjennomsnitt av gjennomsnitt. 
+        # Må bruke dists direkte, legge sammen alle og dele på total count. 
+        if not self.mean_type_dists: self.calcMeanTypeDists()
+
+        if self.mean_type_dists['supBet']:
+            self.SDRsuper = round(self.mean_type_dists['supWith'] / 
+                                  self.mean_type_dists['supBet'], 6)
         else: 
-            superSDR = 1
+            self.SDRsuper = float("NaN")
         
-        if not (tot_means['subBet'] == 0):
-            subSDR = round(tot_means['subWith'] / tot_means['subBet'],4)
-        else: 
-            subSDR = 1
-            
-        return [superSDR, subSDR] # Obs, order of these are 
+        if self.mean_type_dists['subBet']:
+            self.SDRsub = round(self.mean_type_dists['subWith'] / 
+                                self.mean_type_dists['subBet'], 6)
+        else:
+            self.SDRsub = float("NaN")
+        
     
     #test_SDR = calculateSDR(all_means, calc_SDRgroupwise=True)
     
-    def calculatePopSDRs(self):
-        if calc_SDRgroupwise:
-            SDR_subPops = group_dists['subWith']['group_mean'].divide(group_dists['subBet']['group_mean'])
-            SDR_supPops = group_dists['supWith']['group_mean'].divide(group_dists['supBet']['group_mean'])
-            
-            SDR_subPops = SDR_subPops.fillna(0)
-            SDR_supPops = SDR_supPops.fillna(0)
-            
-            SDR_subPops = SDR_subPops.replace(0,1)
-            SDR_supPops = SDR_supPops.replace(0,1)
-            
-            SDR_subPops = SDR_subPops.rename('SDR')
-            SDR_supPops = SDR_supPops.rename('SDR')
-            #SDR_supPops.rename(columns = {'group_mean': 'SDR'}, inplace = True)
-            
-            return [SDR_supPops, SDR_subPops]
+    def calcPopSDRs(self):
+        
+        frame = pd.DataFrame(self.mean_pop_dists)
+        
+        for key, val in self.mean_type_dists:
+            for pop, mean in val:
+                pass
+        
+        # SDR_subpops = frame['sub']
+        # SDR_subops = self.mean_pop_dists['subWith']['group_mean'].divide(group_dists['subBet']['group_mean'])
+       # SDR_supPops = group_dists['supWith']['group_mean'].divide(group_dists['supBet']['group_mean'])
+        
+        # SDR_subPops = SDR_subPops.fillna(0)
+        # SDR_supPops = SDR_supPops.fillna(0)
+        
+        # SDR_subPops = SDR_subPops.replace(0,1)
+        # SDR_supPops = SDR_supPops.replace(0,1)
+        
+        # SDR_subPops = SDR_subPops.rename('SDR')
+        # SDR_supPops = SDR_supPops.rename('SDR')
+        # #SDR_supPops.rename(columns = {'group_mean': 'SDR'}, inplace = True)
+        
+        # self.superPopSDRs = SDR_supPops
+        # self.subPopSDRs = SDR_subPops
     
     
-    def calculateSDV(SDRs):
+    def calculateSDV(self, SDRs):
         """
         Input: 
             SDR values for all populations
@@ -193,72 +202,52 @@ class treeDispersion(treeInfo):
         return [round(classType.var(), 4) for classType in SDRs]    
     
     #SDVs = calculateSDV(test_SDR)
-              
+    
+    def getSDRsuper(self): return self.SDRsuper
+    def getSDRsub(self): return self.SDRsub
 
 
 #%% Run
 
 if __name__ == '__main__': 
+    pass
     
 # =============================================================================
 #     # Load data
 # =============================================================================
-    
-    # Distance matrices:
-    # Test - locally saved
-    cd_dir_local = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/cophenetic_dists/' 
-    # True - saved on redhood drive
-    cd_dir_redhood = 'E:/Master/cophenetic_dists/'
-    
-    # Population information file:
-    pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
-    
-    # Output path for SDR and SDV values:
-    # Test
-    SDR_output_test = 'C:/Users/norab/MasterDisaster/Data/SDR/SDR_values_subset_allgroups.csv'
-    SDV_output_test = 'C:/Users/norab/MasterDisaster/Data/SDV/SDV_values_subset.csv'
-    # True
-    SDR_output_redhood =  'E:/Master/SDR/SDR_values_all.csv'
-    SDV_output_redhood =  'E:/Master/SDV/SDV_values_all.csv'
-    
-    # Output path for group SDRs
-    # True
-    SDR_output_redhood_allGroups =  'E:/Master/SDR/SDR_values_all_groups.csv'
-    
-    
-    # Output path for logging unprocessed cd-files upon disruption
-    # Test SDR and SDV
-    SDR_unprocessed_test = 'C:/Users/norab/MasterDisaster/Data/SDR/unprocessed_cd_files_subset.csv'
-    SDV_unprocessed_test = 'C:/Users/norab/MasterDisaster/Data/SDV/unprocessed_cd_files_subset.csv'
-    # True SDR and SDV
-    SDR_unprocessed_redhood = 'E:/Master/SDR/unprocessed_cd_files.csv'
-    SDV_unprocessed_redhood = 'E:/Master/SDV/unprocessed_cd_files.csv'
-    # True SDR groups
-    SDR_unprocessed_redhood_allGroups = 'E:/Master/SDR/unprocessed_cd_files_all_groups.csv'
 
-# =============================================================================
-#     # Run
-# =============================================================================
-    
-    # Test SDR and SDV
-    runSDRorSDVpipe(cd_dir_local, pop_info, SDR_unprocessed_redhood, SDR_outputfile = SDR_output_redhood_allGroups, calc_SDRgroupwise=True)
-    # True SDR and SDV
-    runSDRorSDVpipe(cd_dir_redhood, pop_info, SDR_unprocessed_redhood, SDR_outputfile = SDR_output_redhood_allGroups, calc_SDRgroupwise=True)
-    
-    # True SDR groups
-    runSDRorSDVpipe(cd_dir_redhood, pop_info, SDR_unprocessed_redhood_allGroups, SDR_outputfile = SDR_output_redhood_allGroups, calc_SDRgroupwise=True)
-    # Real SDV
-    runSDRorSDVpipe(cd_dir_redhood, pop_info, SDV_unprocessed_redhood, SDV_outputfile = SDV_output_redhood)
+#%% Testing
+# Distance matrices:
+# Test - locally saved
+cd_dir_local = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/cophenetic_dists/' 
+# True - saved on redhood drive
+cd_dir_redhood = 'E:/Master/cophenetic_dists/'
 
-    # Disruption: 
-    # Open list of unprocessed files if disrupted
-    with open('E:/Master/SDR/unprocessed_cd_files_all_groups.csv', newline='') as f:
-        cd_dir_redhood_continue = list(f)[0].split(',')
+# Population information file:
+pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
 
-    # Continue run: 
-    runSDRorSDVpipe(cd_dir_redhood_continue, pop_info, SDR_unprocessed_redhood_allGroups, SDR_outputfile = SDR_output_redhood_allGroups, calc_SDRgroupwise=True)
+# Output path for SDR and SDV values:
+# Test
+SDR_output_test = 'C:/Users/norab/MasterDisaster/Data/SDR/SDR_values_subset_allgroups.csv'
+SDV_output_test = 'C:/Users/norab/MasterDisaster/Data/SDV/SDV_values_subset.csv'
+# True
+SDR_output_redhood =  'E:/Master/SDR/SDR_values_all.csv'
+SDV_output_redhood =  'E:/Master/SDV/SDV_values_all.csv'
 
-    # TO DO: Change homecooked disruption system to better logging-system. 
-    
+# Output path for group SDRs
+# True
+SDR_output_redhood_allGroups =  'E:/Master/SDR/SDR_values_all_groups.csv'
+
+
+# Output path for logging unprocessed cd-files upon disruption
+# Test SDR and SDV
+SDR_unprocessed_test = 'C:/Users/norab/MasterDisaster/Data/SDR/unprocessed_cd_files_subset.csv'
+SDV_unprocessed_test = 'C:/Users/norab/MasterDisaster/Data/SDV/unprocessed_cd_files_subset.csv'
+# True SDR and SDV
+SDR_unprocessed_redhood = 'E:/Master/SDR/unprocessed_cd_files.csv'
+SDV_unprocessed_redhood = 'E:/Master/SDV/unprocessed_cd_files.csv'
+# True SDR groups
+SDR_unprocessed_redhood_allGroups = 'E:/Master/SDR/unprocessed_cd_files_all_groups.csv'
+
 
 

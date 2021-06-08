@@ -11,6 +11,7 @@ import pytest
 import unittest
 
 from treeAnalysis.treeInformation import treeInfo
+from treeAnalysis.dispersionMetrics import treeDispersion
 
 #%% 
 
@@ -124,7 +125,7 @@ class TestTreeFunctions(unittest.TestCase):
 
 #%% 
 
-    def test_calcMeanPopDists():
+    def test_calcMeanTypeDists():
         test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
         pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
     
@@ -142,8 +143,15 @@ class TestTreeFunctions(unittest.TestCase):
         # TO DO when tired: 
         # manually add dists from dists mat to check if corresponds to
         # values coming from calcMeanPopDists().
-
         
+    def test_calcMeanPopDists():
+        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
+        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'    
+        tree = treeInfo()
+        tree.setup(test_gene_small, pop_info)
+        tree.calcMeanPopDists()
+        test = tree.mean_pop_dists
+        pop_dists = tree.pop_dists
 
 
 #%% 
