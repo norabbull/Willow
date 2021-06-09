@@ -11,13 +11,14 @@ import os
 from os.path import isfile, join
 import csv
 from datetime import datetime
+import pandas as pd
 
 class RunStuff(treeDispersion):
     
     def __init__(self):
         treeDispersion.__init__(self)
 
-    def make_filelist(self, input_files):
+    def make_filelist(self,input_files):
     
         if isinstance(input_files, str):     
             files = [join(input_files, f) for f in os.listdir(input_files) 
@@ -25,22 +26,27 @@ class RunStuff(treeDispersion):
         return files
 
 
-    def run_calcSDR(self, 
-                    input_files, 
+    def run_calcSDR(self,input_files, 
                     pop_info,
                     SDRsuper_output,
                     SDRsub_output,
                     unprocessed_files):
         
-             # List of files (make absolute path name of each file in dir)
 
-        file_list = self.make_filelist(input_files)
-        ind = 0
+        if '.csv' not in input_files:
+            file_list = self.make_filelist(input_files)
+            ind = 0
+        else: 
+            file_list = pd.read_csv(input_files, header = None)
+            file_list = list(file_list[0])
+            ind = len(file_list)
+            
         print("Files to process:\n", file_list)
-        
+
         try:
             while file_list:
                 dist_mat = file_list.pop().strip()
+                
                 print("File processed: ", dist_mat)   # TO DO: convert to log
                 print("Number: ", ind)
                 
@@ -196,12 +202,22 @@ if __name__ == '__main__':
     
     
     redhood_input_files =  'E:\\Master\\cophenetic_dists'
+    redhood_input_files_continue1 = 'E:\\Master\\current_run\\unprocessed_genes_09.06_14.40.csv'
     pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
     SDRsuper = 'E:\\Master\\current_run\\SDRsuper_runDate{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))  # dd/mm/YY H:M
     SDRsub = 'E:\\Master\\current_run\\SDRsub_runDate{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))  # dd/mm/YY H:M
-    save_unprocessed = 'E:\\Master\\current_run\\unprocessed_files.csv'
-        
-    RunStuff.run_calcSDR(input_files = redhood_input_files, 
+    save_unprocessed = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SDRcalc_{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))
+    
+    run = RunStuff()
+    
+    # run.run_calcSDR(input_files = redhood_input_files, 
+    #                      pop_info = pop_info, 
+    #                      SDRsuper_output = SDRsuper, 
+    #                      SDRsub_output = SDRsub, 
+    #                      unprocessed_files = save_unprocessed)
+    
+    # Run 2, continue form disruption 09.06
+    run.run_calcSDR(input_files = redhood_input_files_continue1, 
                          pop_info = pop_info, 
                          SDRsuper_output = SDRsuper, 
                          SDRsub_output = SDRsub, 
