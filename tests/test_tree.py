@@ -155,6 +155,56 @@ class TestTreeFunctions(unittest.TestCase):
 
 
 #%% 
+    def test_calcSDR():
+        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
+        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+    
+        tree = treeDispersion()
+        tree.setup(test_gene_small, pop_info)
+        meanTypeDists = tree.getMeanTypeDists()
+        tree.calcSDR()
+        treeSubSDR = tree.SDRsub
+        treeSupSDR = tree.SDRsuper
+        
+        # Manual calc: 
+        # Mean within superpop dist: 0
+        # Mean between superpop dist: 
+        mWsup = meanTypeDists['supWith']
+        mBsup = meanTypeDists['subBet']
+        mWsub = meanTypeDists['subWith']
+        mBsub = meanTypeDists['subBet']
+        
+        subSDR = round(mWsub / mBsub, 6)
+        supSDR = round(mWsup / mBsup, 6)        
+        
+        assert subSDR == treeSubSDR
+        assert supSDR == treeSupSDR
+        
+
+#%%
+    def test_calcSingleSDRs():
+        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
+        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        
+        tree = treeDispersion()
+        tree.setup(test_gene_small, pop_info)
+        tree.calcSingleSDRs()
+        
+        singleSuperSDR = tree.getSingleSuperSDR()
+        singleSubSDR = tree.getSingleSubSDR()
+        
+        treeSubSDR = tree.SDRsub
+        treeSupSDR = tree.SDRsuper
+        
+        # Manual calc: 
+        # Mean within superpop dist: 0
+        # Mean between superpop dist: 
+        mWsup = 0 + 0.005 + 0 + 0 + 0.003
+        mBsup = 0.00081 +0.00072 + 0 + 0 + 0.00054
+        mWsub = 24*0 + 0.005 + 0.003
+        mBsub = 23*0 + 0.00072 + 0.00054 + 0.00081
+
+#%% 
 
 if __name__ == "__main__":
     # Make one instance just to make a samller subset: 

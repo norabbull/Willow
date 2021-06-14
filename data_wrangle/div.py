@@ -7,11 +7,17 @@ Created on Wed Jun  2 06:45:58 2021
 
 from treeAnalysis.treeInformation import treeInfo
 import pandas as pd
+import os
+from os.path import isfile, join
+import re
 
+
+#%% 
 test_genes = ['E:/Master/cophenetic_dists/ENSG00000000938___FGR___CopD.csv',
              'E:/Master/cophenetic_dists/ENSG00000134183___GNAT2___CopD.csv',
              'E:/Master/cophenetic_dists/ENSG00000105669___COPE___CopD.csv',
-             'E:/Master/cophenetic_dists/ENSG00000164828___SUN1___CopD.csv']
+             'E:/Master/cophenetic_dists/ENSG00000164828___SUN1___CopD.csv',
+             'E:/Master/cophenetic_dists/ENSG00000164654___MIO___CopD.csv']
 
 pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
     
@@ -41,15 +47,145 @@ submat2 = pd.read_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_ma
 # =============================================================================
 
 test_files2 = {'pop_info': pop_info,
-              'dist_mat': test_genes[3]}
+              'dist_mat': test_genes[4]}
 
 tree2 = treeInfo()
 tree2.setup(test_files2['dist_mat'], test_files2['pop_info'])
 mat2 = tree2.getDistMat()
 
-submat2 = mat2.iloc[203:208,203:208]
-submat2.to_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/SUN1_5x5.csv')
+submat3 = mat2.iloc[132:137,132:137]
+submat3['EUR___GBR___HG00236']['EUR___GBR___HG00159'] = 0.005
+submat3['EUR___GBR___HG00159']['EUR___GBR___HG00236'] = 0.005
+submat3['AMR___MXL___NA19758']['AMR___MXL___NA19795'] = 0.003
+submat3['AMR___MXL___NA19795']['AMR___MXL___NA19758'] = 0.003
+
+
+submat3.to_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/MIO_5x5.csv')
 
 # Check if equal: 
-submat2 = pd.read_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/FGR_10x10.csv', index_col = 0)
-(submat == submat2).eq(True).all().all()
+submat4 = pd.read_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/MIO_5x5.csv', index_col = 0)
+(submat3 == submat4).eq(True).all().all()
+
+
+
+# =============================================================================
+#  Make list of unprocces files from SDR file
+# =============================================================================
+
+# Interruption 1, 09.06.14.40
+processed_genes = pd.read_csv('E:\Master\current_run\SDRsuper_runDate08.06.2021_15.57.csv', index_col = 0)
+processed_genes = pd.Series(processed_genes.index) 
+# Add ful path
+
+processed_genes.to_csv('E:\\Master\\current_run\\processed_genes_09.06_14.40.csv', index = False)
+
+# all genes
+all_genes = make_filelist('E:\Master\cophenetic_dists')
+unprocessed_genes = all_genes.copy()
+
+for file in all_genes: 
+    name = geneName(file)
+    for g in processed_genes: 
+        if name in g: 
+            unprocessed_genes.remove(file)
+
+unprocessed_genes = pd.Series(unprocessed_genes)
+unprocessed_genes.to_csv('E:\\Master\\current_run\\unprocessed_genes_09.06_14.40.csv', index = False)
+
+# 10.06, 13.16 ----------------------------------------------------------------
+processed_genes = list(pd.read_csv('E:\Master\current_run\SDRsub_runDate08.06.2021_15.57.csv', index_col = 0, header = None).index)
+processed_genes2 = list(pd.read_csv('E:\Master\current_run\SDRsub_runDate09.06.2021_16.57.csv', index_col = 0, header = None).index)
+processed_genes3 = list(pd.read_csv('E:\Master\current_run\SDRsub_runDate10.06.2021_03.54.csv', index_col = 0, header = None).index)
+processed_genes4 = list(pd.read_csv('E:\Master\current_run\SDRsub_runDate10.06.2021_13.46.csv', index_col = 0, header = None).index)
+
+
+
+all_processed_genes = list(set(processed_genes + processed_genes2 + processed_genes3 + processed_genes4))
+#all_processed_genes = processed_genes + processed_genes2 + processed_genes3 + processed_genes4
+# Add ful path
+
+pd.Series(all_processed_genes).to_csv('E:\\Master\\current_run\\processed_genes_10.06.2021_13.35.csv', index = False)
+
+# all genes
+all_genes = list(set(make_filelist('E:\Master\cophenetic_dists')))
+unprocessed_genes = all_genes.copy()
+
+for file in all_genes: 
+    #name = geneName(file)
+    for gene in all_processed_genes: 
+        if gene in file: 
+            try:
+                unprocessed_genes.remove(file)
+            except:
+                print(f"{file} not removed. ")
+            
+        
+
+ug = pd.Series(unprocessed_genes)
+ug.to_csv('E:\\Master\\current_run\\unprocessed_genes_11.06.21_11.40.csv', index = False)
+
+# Testing stuff
+for file in unprocessed_genes: 
+    if "ENSG00000110680___CALCA" in file: 
+        print("File:", file)
+
+# =============================================================================
+# Make list of unprocessed files from unprocessed files list file
+# =============================================================================
+
+redhood_input_files_continue2 = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SDRcalc_09.06.2021_16.57.csv' 
+liste = pd.read_csv(redhood_input_files_continue2 , header = None, sep = ",",).transpose()
+liste.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SDRcalc_09.06.2021_16.57_update.csv' , 
+             index = False,
+             header = False)
+liste.to_csv(file_list, index = False,
+             header = False)
+
+
+
+# =============================================================================
+# Merge SDR calculation files to one
+# =============================================================================
+
+# Extract SDRsub and SDRsuper file paths
+
+all_files = make_filelist('E:\Master\current_run')
+SDRsuper_files = [f for f in all_files if 'SDRsuper' in f]
+SDRsub_files = [f for f in all_files if 'SDRsub' in f]
+
+# Load
+SDRsuper = pd.DataFrame(columns = ['gene', 'val'])
+SDRsub = pd.DataFrame(columns = ['gene', 'val'])
+for f in SDRsuper_files: 
+    SDRsuper = SDRsuper.append(pd.read_csv(f, names = ['gene', 'val']))
+for f in SDRsub_files: 
+    SDRsub = SDRsub.append(pd.read_csv(f, names = ['gene', 'val']))
+
+SDRsuper.drop_duplicates(inplace=True)
+SDRsub.drop_duplicates(inplace=True)
+
+# Save
+SDRsuper.to_csv('E:\Master\current_run\SDRsuper_all.csv', index = False, header = False)
+SDRsub.to_csv('E:\Master\current_run\SDRsub_all.csv', index = False, header = False)
+#%% Helpers
+def make_filelist(input_files):
+
+    if isinstance(input_files, str):     
+        files = [join(input_files, f) for f in os.listdir(input_files) 
+                     if isfile(join(input_files, f))]
+    return files
+
+def geneName(dist_mat_file):
+    """
+    Input: 
+        file: string filepath to distance matrix-file. 
+    Function: 
+        Filters out name of gene the tree represents and assign to
+        class variable "gene_name".
+        Both Ensembl and gene name identifiers included on the form: 
+            'ENSG00000000938___FGR'
+    """
+    subName = re.sub('^.:.*ENS', 'ENS', dist_mat_file)
+    gene_name = re.sub('___CopD.csv$','', subName)
+    
+    return gene_name

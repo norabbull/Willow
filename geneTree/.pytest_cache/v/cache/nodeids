@@ -1,0 +1,6 @@
+[
+  "test_getTreeInfo.py::test_getGeneName", 
+  "test_getTreeInfo.py::test_getGroupTypes", 
+  "test_getTreeInfo.py::test_getSampleInfo", 
+  "test_getTreeInfo.py::test_calcMeanGroupDists"
+]
