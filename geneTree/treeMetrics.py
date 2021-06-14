@@ -111,7 +111,8 @@ from os import listdir
 from os.path import isfile, join
 import csv   
 import pandas as pd
-from treeAnalysis.treeInformation import treeInfo
+import numpy as np
+from geneTree.treeInformation import treeInfo
 #file = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/cophenetic_dists/ENSG00000001167___NFYA___CopD.csv'
 #cd_mat = readCDgene(file)
 
@@ -120,11 +121,13 @@ from treeAnalysis.treeInformation import treeInfo
     
     
     #all_means = calcMeanGroupDists(cd_mat, sample_info, group_types
-class treeDispersion(treeInfo):
+class treeMetrics(treeInfo):
     
     def __init__(self):
         
-        
+        self.pop_dists = None
+        self.mean_pop_dists = None
+        self.mean_type_dists = None
         self.SDRsuper = None
         self.SDRsub = None
         self.SDVsuper = None
@@ -135,7 +138,7 @@ class treeDispersion(treeInfo):
     
     def calcPopDists(self):
         """
-        Calculate mean inter and intra population distances
+        Calculate inter and intra population distances
         for both classification types (Super and sub).
         These are merged into one function for efficiency reasons.
     
@@ -245,7 +248,7 @@ class treeDispersion(treeInfo):
             for pop, dist_count in val.items():
                 if dist_count[1]:  
                     type_means[pop] = round(dist_count[0] / dist_count[1], 6)
-                else: # No distance calculated for this
+                else:   # No distance calculated for this pop
                     type_means[pop] = 0
              
             mean_pop_dists[key] = type_means
@@ -320,8 +323,7 @@ class treeDispersion(treeInfo):
             self.singleSuperSDR[pop] = ratio
         
         for pop in super_pop_info: 
-            ratio = self.mean_pop_dists['subWith'][pop] / 
-                    self.mean_pop_dists['subBet'][pop]
+            ratio = self.mean_pop_dists['subWith'][pop] / self.mean_pop_dists['subBet'][pop]
             self.singleSubSDR[pop] = ratio
 
     
