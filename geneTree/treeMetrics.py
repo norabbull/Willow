@@ -266,8 +266,7 @@ class treeMetrics(treeInfo):
         Function: 
             Calculates group mean for either full group (calc_SDRgroupwise = False)
                 or every single group (.. = True.)
-        Return:
-            Float: overall mean of distances for classification type        
+        Testing: OK.   
         """
         
         # Dette blir feil. Du tar gjennomsnitt av gjennomsnitt. 
@@ -296,58 +295,53 @@ class treeMetrics(treeInfo):
         
         Example: Africa
             mean(distances between all African samples) /
-            mean(distances between all African - non African samples )
+            mean(distances between all African and non-African samples )
             
-        Can be used to calculate SDV. 
+        Used to calculate SDV and as indicational measure.
         
-        Returns
-        -------
-        List of ratios for each population. 
-        
-        Do: 
-            fetch the right mean distances from mean_pop_dists. 
-            Super within
-            Super between
-            Sub within
-            Sub between
+        Test: OK.
         """
+        
+        if not self.mean_pop_dists : self.calcMeanPopDists()
         
         self.singleSuperSDR = {}
         self.singleSubSDR = {}
-        frame = pd.DataFrame(self.mean_pop_dists)
-        super_pop_info = self.getSuperPopInfo() # Set with existing population groups        
-        sub_pop_info = self.getSubPopInfo()
+        #frame = pd.DataFrame(self.mean_pop_dists)
         
-        for pop in super_pop_info: 
-            ratio = self.mean_pop_dists['supWith'][pop] / self.mean_pop_dists['supBet'][pop]
-            self.singleSuperSDR[pop] = ratio
+       
+        for pop in self.super_pops:
+            ratio = 0
+            if self.mean_pop_dists['supBet'][pop]:
+                ratio = (self.mean_pop_dists['supWith'][pop] / 
+                        self.mean_pop_dists['supBet'][pop])
+            self.singleSuperSDR[pop] = round(ratio, 3)
         
-        for pop in super_pop_info: 
-            ratio = self.mean_pop_dists['subWith'][pop] / self.mean_pop_dists['subBet'][pop]
-            self.singleSubSDR[pop] = ratio
+        for pop in self.sub_pops: 
+            ratio = 0
+            if self.mean_pop_dists['subBet'][pop]:
+                ratio = (self.mean_pop_dists['subWith'][pop] / 
+                         self.mean_pop_dists['subBet'][pop])
+            self.singleSubSDR[pop] = round(ratio, 3)
 
     
-    def calculateSDV(self):
+    def calcSDV(self):
         """
-        Measure of variability occuring between inidivdual clusters in a tree. 
-        
-        
-        Input: 
-            SDR values for all populations
-        Return: 
-            SDVs for sup and sub pops (ints in list)
+        Measure of variability of single SDRs.
+        Gives measure of difference in cluster structures. 
+        Testing: to do
         """
-        if not self.singleSuperSDR: 
-            self.calcSingleSDRs()
+        if not self.singleSuperSDR: self.calcSingleSDRs()
         
         # Test if this works
-        self.SDVsuper = round(np.array(self.singleSuperSDR.values()).var, 4)
-        self.SDVsub = round(np.array(self.singleSubSDR.values()).var, 4)
+        self.SDVsuper = round(np.array(list(self.singleSuperSDR.values())).var(ddof=1), 4)
+        self.SDVsub = round(np.array(list(self.singleSubSDR.values())).var(ddof=1), 4)
     
     def calcNonZeroTotal(self, 
                          dist_mat, 
                          percent = True):
         """
+
+        Testing: to do
         Input:
             dist_mat : DataFrame with cophenetic distances for a tree
     
@@ -474,9 +468,11 @@ class treeMetrics(treeInfo):
     def getMeanPopDists(self): 
         if not self.mean_pop_dists: self.calcMeanPopDists()
         return self.mean_pop_dists
-        
+    
+    def getSuperPops(self): return self.super_pops
+    def getSubPops(self): return self.sub_pops
     def getSingleSuperSDR(self): return self.singleSuperSDR
-    def getSingleSubDR(self): return self.singleSubSDR
+    def getSingleSubSDR(self): return self.singleSubSDR
     def getSDRsuper(self): return self.SDRsuper
     def getSDRsub(self): return self.SDRsuper
     def getSDVsuper(self): return self.SDVsuper

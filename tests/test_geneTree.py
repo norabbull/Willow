@@ -150,7 +150,7 @@ class TestTreeFunctions(unittest.TestCase):
     
         tree = treeMetrics()
         tree.setup(test_gene_small, pop_info)
-        mat = tree.getDistMat()
+        dist_mat = tree.getDistMat()
         pop_dists = tree.getPopDists()
         meanTypeDists = tree.getMeanTypeDists()
         
@@ -189,12 +189,15 @@ class TestTreeFunctions(unittest.TestCase):
         assert subBetSTU == meanPopDists['subBet']['STU']
         
 
-#%% 
     def test_calcSDR():
+        """
+        OK.
+
+        """
         test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
         pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
     
-        tree = treeDispersion()
+        tree = treeMetrics()
         tree.setup(test_gene_small, pop_info)
         meanTypeDists = tree.getMeanTypeDists()
         tree.calcSDR()
@@ -216,28 +219,75 @@ class TestTreeFunctions(unittest.TestCase):
         assert supSDR == treeSupSDR
         
 
-#%%
     def test_calcSingleSDRs():
+        """
+        OK.
+        """
         test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
         pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
         
-        tree = treeDispersion()
+        tree = treeMetrics()
         tree.setup(test_gene_small, pop_info)
-        tree.calcSingleSDRs()
+        dist_mat = tree.getDistMat()        # Used to get values for manual calc
         
+        tree.calcSingleSDRs()
         singleSuperSDR = tree.getSingleSuperSDR()
         singleSubSDR = tree.getSingleSubSDR()
-        
-        treeSubSDR = tree.SDRsub
-        treeSupSDR = tree.SDRsuper
-        
+
         # Manual calc: 
-        # Mean within superpop dist: 0
-        # Mean between superpop dist: 
-        mWsup = 0 + 0.005 + 0 + 0 + 0.003
-        mBsup = 0.00081 +0.00072 + 0 + 0 + 0.00054
-        mWsub = 24*0 + 0.005 + 0.003
-        mBsub = 23*0 + 0.00072 + 0.00054 + 0.00081
+            
+        # Super, AMR
+        mW = 0.003 / 1
+        mB = (6 * 0.00054)/6
+        SDR_AMR = round(mW / mB, 3)
+        assert SDR_AMR == singleSuperSDR['AMR']
+        
+        # Sub, GBR
+        mW = 0.005 / 1
+        mB = ((2*0.00108) + (4*0.00054)) / 6
+        SDR_GBR = round(mW / mB, 3)
+        assert SDR_GBR == singleSubSDR['GBR']        
+
+
+    def test_calcSDV():
+        """
+        OK.
+        """
+        test_gene = 'E:/Master/cophenetic_dists/ENSG00000175336___APOF___CopD.csv'
+        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+    
+        tree = treeMetrics()
+        tree.setup(test_gene, pop_info)
+        tree.calcSDV()
+        
+        # Manual calc:
+        singleSuperSDR = tree.getSingleSuperSDR()
+        singleSubSDR = tree.getSingleSubSDR()
+            
+        # Super
+        mean = (0.422 + 0.79 + 0.202 + 0.455 + 0.138) / 5
+        n = 5-1     # ddof = 1
+        vals = (0.422-mean)**2 + (0.79-mean)**2 + (0.202-mean)**2 + (0.455-mean)**2 + (0.138-mean)**2
+        SDVsuper_man = round(vals / n, 4)         
+        
+        assert tree.getSDVsuper() == SDVsuper_man 
+        
+        # Sub
+        mean = (0.351+0.344+0.181+0.626+0.231+0.501+0.291+0.547+0.5+0.851+0.657+
+                0.539+0.285+0.269+0.101+0.512+0.394+0.163+0.618+0.184+0.12+
+                0.202+0.399+0.867+0.178+0.995) / 26
+        n = 26-1
+        vals = ((0.351-mean)**2+(0.344-mean)**2+(0.181-mean)**2+(0.626-mean)**2+
+        (0.231-mean)**2+(0.501-mean)**2+(0.291-mean)**2+(0.547-mean)**2+
+        (0.5-mean)**2+(0.851-mean)**2+(0.657-mean)**2+(0.539-mean)**2+
+        (0.285-mean)**2+(0.269-mean)**2+(0.101-mean)**2+(0.512-mean)**2+
+        (0.394-mean)**2+(0.163-mean)**2+(0.618-mean)**2+(0.184-mean)**2+
+        (0.12-mean)**2+(0.202-mean)**2+(0.399-mean)**2+(0.867-mean)**2+
+        (0.178-mean)**2+(0.995-mean)**2)
+        SDVsub_man = round(vals / n, 4)
+        
+        assert tree.getSDVsub() == SDVsub_man         
+        
 
 #%% 
 
