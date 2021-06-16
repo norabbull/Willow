@@ -149,7 +149,7 @@ liste.to_csv(file_list, index = False,
 
 # Extract SDRsub and SDRsuper file paths
 
-all_files = make_filelist('E:\Master\current_run')
+all_files = make_filelist('E:\\Master\\current_run')
 SDRsuper_files = [f for f in all_files if 'SDRsuper' in f]
 SDRsub_files = [f for f in all_files if 'SDRsub' in f]
 
@@ -165,8 +165,46 @@ SDRsuper.drop_duplicates(inplace=True)
 SDRsub.drop_duplicates(inplace=True)
 
 # Save
-SDRsuper.to_csv('E:\Master\current_run\SDRsuper_all.csv', index = False, header = False)
-SDRsub.to_csv('E:\Master\current_run\SDRsub_all.csv', index = False, header = False)
+SDRsuper.to_csv('E:\\Master\\current_run\\SDRsuper_all.csv', index = False, header = False)
+SDRsub.to_csv('E:\\Master\\current_run\\SDRsub_all.csv', index = False, header = False)
+
+
+# =============================================================================
+# Filter genes with SDR <= 0.7, 0.6 and 0.5 - NOT RUN YET CUZ SDV IS RUNNING
+# =============================================================================
+
+# Super:
+
+SDRsuper_all = pd.read_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsuper_all.csv',
+                           index = False, header = False, names = ['gene', 'val'])
+SDRsub_all = pd.read_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsub_all.csv',
+                         index = False, header = False, names = ['gene', 'val'])
+
+SDRsuper_07 = SDRsuper_all[SDRsuper_all['val'] <= 0.7]
+SDRsub_07 = SDRsub_all[SDRsub_all['val'] <= 0.7]
+
+SDRsuper_06 = SDRsuper_all[SDRsuper_all['val'] <= 0.6]
+SDRsub_06 = SDRsub_all[SDRsub_all['val'] <= 0.6]
+
+SDRsuper_05 = SDRsuper_all[SDRsuper_all['val'] <= 0.5]
+SDRsub_05 = SDRsub_all[SDRsub_all['val'] <= 0.5]
+
+# Save 
+SDRsuper_07.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsuper_07.csv', 
+                   index = False, header = False)
+SDRsub_07.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsub_07.csv', 
+                   index = False, header = False)
+SDRsuper_06.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsuper_06.csv', 
+                   index = False, header = False)
+SDRsub_06.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsub_06.csv', 
+                   index = False, header = False)
+SDRsuper_05.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsuper_05.csv', 
+                   index = False, header = False)
+SDRsub_05.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsub_05.csv', 
+                   index = False, header = False)
+
+
+
 #%% Helpers
 def make_filelist(input_files):
 

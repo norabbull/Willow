@@ -132,7 +132,8 @@ class treeMetrics(treeInfo):
         self.SDRsub = None
         self.SDVsuper = None
         self.SDVsub = None
-        self.singleSDRs = None
+        self.singleSuperSDRs = None
+        self.singleSubSDRs = None
         
         treeInfo.__init__(self)
     
@@ -226,8 +227,7 @@ class treeMetrics(treeInfo):
         
         self.mean_type_dists = {key: round(dist_summary[key] / count_summary[key], 8) 
                                 for key, val in dist_summary.items()}
-        
-        
+             
         
     def calcMeanPopDists(self):
         """
@@ -304,8 +304,8 @@ class treeMetrics(treeInfo):
         
         if not self.mean_pop_dists : self.calcMeanPopDists()
         
-        self.singleSuperSDR = {}
-        self.singleSubSDR = {}
+        self.singleSuperSDRs = {}
+        self.singleSubSDRs = {}
         #frame = pd.DataFrame(self.mean_pop_dists)
         
        
@@ -314,14 +314,14 @@ class treeMetrics(treeInfo):
             if self.mean_pop_dists['supBet'][pop]:
                 ratio = (self.mean_pop_dists['supWith'][pop] / 
                         self.mean_pop_dists['supBet'][pop])
-            self.singleSuperSDR[pop] = round(ratio, 3)
+            self.singleSuperSDRs[pop] = round(ratio, 3)
         
         for pop in self.sub_pops: 
             ratio = 0
             if self.mean_pop_dists['subBet'][pop]:
                 ratio = (self.mean_pop_dists['subWith'][pop] / 
                          self.mean_pop_dists['subBet'][pop])
-            self.singleSubSDR[pop] = round(ratio, 3)
+            self.singleSubSDRs[pop] = round(ratio, 3)
 
     
     def calcSDV(self):
@@ -330,11 +330,11 @@ class treeMetrics(treeInfo):
         Gives measure of difference in cluster structures. 
         Testing: to do
         """
-        if not self.singleSuperSDR: self.calcSingleSDRs()
+        if not self.singleSuperSDRs: self.calcSingleSDRs()
         
         # Test if this works
-        self.SDVsuper = round(np.array(list(self.singleSuperSDR.values())).var(ddof=1), 4)
-        self.SDVsub = round(np.array(list(self.singleSubSDR.values())).var(ddof=1), 4)
+        self.SDVsuper = round(np.array(list(self.singleSuperSDRs.values())).var(ddof=1), 4)
+        self.SDVsub = round(np.array(list(self.singleSubSDRs.values())).var(ddof=1), 4)
     
     def calcNonZeroTotal(self, 
                          dist_mat, 
@@ -471,8 +471,8 @@ class treeMetrics(treeInfo):
     
     def getSuperPops(self): return self.super_pops
     def getSubPops(self): return self.sub_pops
-    def getSingleSuperSDR(self): return self.singleSuperSDR
-    def getSingleSubSDR(self): return self.singleSubSDR
+    def getSingleSuperSDRs(self): return self.singleSuperSDRs
+    def getSingleSubSDRs(self): return self.singleSubSDRs
     def getSDRsuper(self): return self.SDRsuper
     def getSDRsub(self): return self.SDRsuper
     def getSDVsuper(self): return self.SDVsuper

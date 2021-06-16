@@ -97,9 +97,36 @@ def play():
     
     return k, r
 
-i, j = play()
 
-k = None
 
-liste = []
+round(np.array(list(singleSuperSDR.values())).var(), 4)
+round(np.array(self.singleSubSDR.values()).var(), 4)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

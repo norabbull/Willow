@@ -93,30 +93,20 @@ class treeInfo:
             superName = re.sub('_.*$','', sample)
             
             self.sample_info[ind] = [sample, superName, subName]
-    
-    
-    
-    def getSampleInfo(self): 
-        if self.sample_info is None: self.setSampleInfo()
-        return self.sample_info
-    
+     
+    def getSampleInfo(self): return self.sample_info
     def getPopInfo(self): return self.pop_info
     def getGeneName(self): return self.gene_name
     def getDistMat(self): return self.dist_mat 
-    
-    
-    
-    
-
-    #%% But other place. This will instantiate many trees and not be a part of that class. 
-
+  
     
     #%% 
     
     
     def countPopSamples(sample_info, popType = 'super'):
         """
-        Count number of smaples for each super or sub population
+        TO FINISH AND TEST:
+        Count number of samples for each super or sub population
         popType can be 'super' or 'sub' or both
         """
         
