@@ -204,7 +204,6 @@ class treeMetrics(treeInfo):
         self.pop_dists = {'supWith': supWithSums, 'supBet': supBetSums, 
                 'subWith': subWithSums, 'subBet': subBetSums}
 
-
         
     def calcMeanTypeDists(self):
         """
@@ -277,16 +276,14 @@ class treeMetrics(treeInfo):
             self.SDRsuper = round(self.mean_type_dists['supWith'] / 
                                   self.mean_type_dists['supBet'], 6)
         else: 
-            self.SDRsuper = float("NaN")
+            self.SDRsuper = float('NaN')
         
         if self.mean_type_dists['subBet']:
             self.SDRsub = round(self.mean_type_dists['subWith'] / 
                                 self.mean_type_dists['subBet'], 6)
         else:
-            self.SDRsub = float("NaN")
+            self.SDRsub = float('NaN')
         
-    
-    #test_SDR = calculateSDR(all_means, calc_SDRgroupwise=True)
     
     def calcSingleSDRs(self):
         """
@@ -310,17 +307,19 @@ class treeMetrics(treeInfo):
         
        
         for pop in self.super_pops:
-            ratio = 0
+            ratio = float('NaN')
             if self.mean_pop_dists['supBet'][pop]:
                 ratio = (self.mean_pop_dists['supWith'][pop] / 
                         self.mean_pop_dists['supBet'][pop])
+
             self.singleSuperSDRs[pop] = round(ratio, 3)
         
         for pop in self.sub_pops: 
-            ratio = 0
+            ratio = float('NaN')
             if self.mean_pop_dists['subBet'][pop]:
                 ratio = (self.mean_pop_dists['subWith'][pop] / 
                          self.mean_pop_dists['subBet'][pop])
+
             self.singleSubSDRs[pop] = round(ratio, 3)
 
     

@@ -108,7 +108,6 @@ class TestTreeFunctions(unittest.TestCase):
     
         return info
 
-    #%% 
     
     def test_calcPopDists():
         """
@@ -317,7 +316,7 @@ if __name__ == "__main__":
 # =============================================================================
 #     Test full set
 # =============================================================================
-    # Normally, 
+
     tree1 = treeInfo(test_files1['dist_mat'], test_files1['pop_info'])
     
     mat = tree1.getDistMat()
@@ -327,4 +326,9 @@ if __name__ == "__main__":
     submat.to_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/FGR_10x10.csv')
     submat2 = pd.read_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/FGR_10x10.csv', index_col = 0)
 
-    
+        
+        
+    tree = treeMetrics()
+    tree.setup('E:/Master/cophenetic_dists/ENSG00000003096___KLH13___CopD.csv', pop_info)
+    dist_mat = tree.getDistMat()
+        

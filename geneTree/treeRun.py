@@ -31,7 +31,7 @@ class RunStuff():
                     pop_info,
                     SDRsuper_output,
                     SDRsub_output,
-                    unprocessed_files):
+                    save_unprocessed):
         
 
         if '.csv' not in input_files:
@@ -48,13 +48,13 @@ class RunStuff():
 
         try:
             while file_list:
-                dist_mat = file_list.pop().strip()
+                dist_file = file_list.pop().strip()
                 
-                print("File processed: ", dist_mat)   # TO DO: convert to log  
+                print("File processed: ", dist_file)   # TO DO: convert to log  
                 print(f"Number: {ind} / {ind_len}")
                 
                 tree = treeMetrics()
-                tree.setup(dist_mat, pop_info)
+                tree.setup(dist_file, pop_info)
                 tree.calcSDR()
                 
                 supSDR = tree.getSDRsuper()
@@ -75,35 +75,36 @@ class RunStuff():
                 with open(SDRsub_output, 'a', newline='') as f:   # write to file    
                     writer = csv.writer(f)
                     writer.writerow(subSDR)
-                
+
         except: 
             # Write remaining filelist to file
             print("Disrupted.")
-            print("Last file processed:", dist_mat)
-            file_list.to_csv(unprocessed_files, index = False, header = False)
-            with open(unprocessed_files, 'w', newline='') as f:
-                writer = csv.writer(f)
-                for f in file_list: 
-                    writer.writerow(f)
+            print("Last file processed:", dist_file)
+            
+            with open(save_unprocessed, 'w') as f: 
+                write = csv.writer(f) 
+                write.writerow(file_list) 
+
+       
 
 
     def run_calcSingleSDRs(self, 
                            input_files, 
                            pop_info,
                            SSDR_output_dir,
-                           unprocessed_files):
+                           save_unprocessed):
         
-    """
-    Save one file for each gene. 
-    File example: 
-        
-        Level   population    SingleSDR
-        Super   AFR           0.4
-        Super   EUR           0.5
-        Sub     FIN           0.8
-        ...     ...           ...
-        
-    """
+        """
+        Save one file for each gene. 
+        File example: 
+            
+            Level   population    SingleSDR
+            Super   AFR           0.4
+            Super   EUR           0.5
+            Sub     FIN           0.8
+            ...     ...           ...
+            
+        """
         
         if '.csv' not in input_files:
             file_list = self.make_filelist(input_files)
@@ -131,8 +132,8 @@ class RunStuff():
                 supSDRs = tree.getSingleSuperSDRs()
                 subSDRs = tree.getSingleSubSDRs()
                 
-                print("Super SDR: ", supSDRs)
-                print("Sub SDR: ", subSDRs)
+                # print("Super SDR: ", supSDRs)
+                # print("Sub SDR: ", subSDRs)
                 
                 # TEST THIS WORKS
                 df_sup = pd.DataFrame([['super', pop, val] for pop, val in supSDRs.items()],
@@ -141,21 +142,20 @@ class RunStuff():
                                    columns=['level', 'pop', 'singleSDR'])
                 
                 # Write to file
-                df = pd.concat([df_sup, df_sub], ignore_index = True, axis = 0)            
-                SSDR_output_file = (SSDR_output_dir + 'SSDR_' + tree.gene_name()) +'.csv'                
-                df.to_csv(SSDR_output_file, index = False, header = True)  # Test
+                df = pd.concat([df_sup, df_sub], ignore_index = True, axis = 0)
+                SSDR_output_file = (SSDR_output_dir + 'SSDR_' + tree.getGeneName()) +'.csv'                
+                df.to_csv(SSDR_output_file, index = False, header = True,na_rep = "NULL")  # Test
                 
                 ind +=1
                 
         except: 
             # Write remaining filelist to file
             print("Disrupted.")
-            print("Last file processed:", dist_mat)
-            file_list.to_csv(unprocessed_files, index = False, header = False)
-            with open(unprocessed_files, 'w', newline='') as f:
-                writer = csv.writer(f)
-                for f in file_list: 
-                    writer.writerow(f)
+            print("Last file processed:", dist_file)
+            
+            with open(save_unprocessed, 'w') as f: 
+                write = csv.writer(f) 
+                write.writerow(file_list) 
 
        
     def run_calcSDV(self, 
@@ -163,7 +163,7 @@ class RunStuff():
                     pop_info,    
                     SDVsuper_output,
                     SDVsub_output,
-                    unprocessed_files):
+                    save_unprocessed):
         """
         Input: 
             input_files: path to files containing cophenetic distance matrices
@@ -196,13 +196,13 @@ class RunStuff():
 
         try:
             while file_list:
-                dist_mat = file_list.pop().strip()
+                dist_file = file_list.pop().strip()
                 
-                print("File processed: ", dist_mat)   # TO DO: convert to log  
+                print("File processed: ", dist_file)   # TO DO: convert to log  
                 print(f"Number: {ind} / {ind_len}")
                 
                 tree = treeMetrics()
-                tree.setup(dist_mat, pop_info)
+                tree.setup(dist_file, pop_info)
                 
                 tree.calcSDV()
                 
@@ -228,11 +228,13 @@ class RunStuff():
         except: 
             # Write remaining filelist to file
             print("Disrupted.")
-            print("Last file processed:", dist_mat)
-            with open(unprocessed_files, 'w', newline='') as f:
-                writer = csv.writer(f)
-                for f in file_list: 
-                    writer.writerow(f)
+            print("Last file processed:", dist_file)
+            
+            with open(save_unprocessed, 'w') as f: 
+                write = csv.writer(f) 
+                write.writerow(file_list) 
+
+       
 
     def run_CalcNonZeroForPop(self, 
                               input_files,
@@ -270,11 +272,20 @@ class RunStuff():
         #         with open(output_file, 'a') as f:
         #             result.to_csv(output_file, mode = 'a', index_label = 'pop', header=f.tell()==0)
         #         ind += 1
-        # except: 
-        #     print("Disrupted. Something wrong.. ")
+        #         except: 
+            # # Write remaining filelist to file
+            # print("Disrupted.")
+            # print("Last file processed:", dist_file)
+            
+            # with open(save_unprocessed, 'w') as f: 
+            #     write = csv.writer(f) 
+            #     write.writerow(file_list) 
+
+       
             
 
 if __name__ == '__main__':
+    pass
     
 # =============================================================================
 #     SDR
@@ -298,7 +309,7 @@ if __name__ == '__main__':
     #                 pop_info = pop_info, 
     #                       SDRsuper_output = SDRsuper, 
     #                       SDRsub_output = SDRsub, 
-    #                       unprocessed_files = save_unprocessed
+    #                       save_unprocessed = save_unprocessed
     #                       )
     
 # =============================================================================
@@ -312,18 +323,52 @@ if __name__ == '__main__':
     # save_unprocessed = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SDVcalc_{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))
 
         
+    # redhood_input_files =  'E:\\Master\\cophenetic_dists'
+    # pop_info = 'E:\\Master\\otherTreeData\\phydist_population_classes.tsv'
+    # SDVsuper = 'E:\\Master\\current_run\\SDVsuper_runDate{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))  # dd/mm/YY H:M
+    # SDVsub = 'E:\\Master\\current_run\\SDVsub_runDate{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))  # dd/mm/YY H:M
+    # save_unprocessed = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SDVcalc_{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))
+    
+    # run = RunStuff()
+    
+    # run.run_calcSDV(input_files = redhood_input_files, 
+    #                       pop_info = pop_info, 
+    #                       SDVsuper_output = SDVsuper, 
+    #                       SDVsub_output = SDVsub, 
+    #                       save_unprocessed = save_unprocessed
+    #                       )
+    
+    
+# =============================================================================
+#     SingleSDRs
+# =============================================================================
+    
+    # Testrun
+    # input_files = 'E:\\Master\\test_runs\\cophenetic_dists_selection'
+    # pop_info = 'E:\\Master\\otherTreeData\\phydist_population_classes.tsv'
+    # SSDR_output_dir = 'E:\\Master\\test_runs\\singleSDR_test\\'
+    # save_unprocessed = 'E:\\Master\\test_runs\\singleSDR_test\\unprocessed_testRun17.06.21_16.00.csv'
+    
+    # run = RunStuff()
+    # run.run_calcSingleSDRs(
+    #     input_files = input_files, 
+    #     pop_info = pop_info,
+    #     SSDR_output_dir = SSDR_output_dir,
+    #     save_unprocessed = save_unprocessed)
+    
+    # Real run
+        
     redhood_input_files =  'E:\\Master\\cophenetic_dists'
     pop_info = 'E:\\Master\\otherTreeData\\phydist_population_classes.tsv'
-    SDVsuper = 'E:\\Master\\current_run\\SDVsuper_runDate{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))  # dd/mm/YY H:M
-    SDVsub = 'E:\\Master\\current_run\\SDVsub_runDate{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))  # dd/mm/YY H:M
-    save_unprocessed = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SDRcalc_{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))
+    SSDR_output_dir = 'E:\\Master\\current_run\\singleSDRs\\'
+    save_unprocessed = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SSDRcalc_{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))
     
     run = RunStuff()
     
-    run.run_calcSDV(input_files = redhood_input_files, 
+    run.run_calcSingleSDRs(input_files = redhood_input_files, 
                           pop_info = pop_info, 
-                          SDVsuper_output = SDVsuper, 
-                          SDVsub_output = SDVsub, 
-                          unprocessed_files = save_unprocessed
+                          SSDR_output_dir = SSDR_output_dir,
+                          save_unprocessed = save_unprocessed
                           )
+    
     
