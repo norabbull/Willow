@@ -12,39 +12,39 @@ from os.path import isfile, join
 import csv
 from datetime import datetime
 import pandas as pd
+import yaml
+import configparser
+import sys
 
-class RunStuff():
+class RunStuff:
     
-    def __init__(self):
-        pass
-
-    def make_filelist(self, input_files):
-
-        if '.csv' not in input_files:
-            if isinstance(input_files, str):     
-                files = [join(input_files, f) for f in os.listdir(input_files) 
-                             if isfile(join(input_files, f))]
-        else: 
-            files = pd.read_csv(input_files, header = None)
-            files = list(files.iloc[0])
-            
-        return files
-
-    def run_calcSDR(self,
-                    input_files, 
-                    pop_info,
-                    SDRsuper_output,
-                    SDRsub_output,
-                    save_unprocessed):
+    def __init__(self, configFilepath):
         
-
+        with open(configFilepath, 'r') as c:
+            self.config_file = yaml.safe_load(c)
+            
+        for key, val in self.file.items():
+            if 'datetime' in val: 
+                self.file[key] = val.replace('datetime', datetime.now().strftime("%d.%m.%Y_%H.%M"))
+        
+        self.func = self.file['func']
+        
+    def run_calcSDR(self):
+        
+        input_files = self.config_file['input_files']
+        pop_info = self.config_file['pop_info']
+        SDRsuper_output = self.config_file['SDRsuper_output']
+        SDRsub_output = self.config_file['SDRsub_output']
+        save_unprocessed = self.config_file['save_unprocessed']
+            
+            
         file_list = self.make_filelist(input_files)
             
         ind = 0
         ind_len = len(file_list)
             
         print("Files to procescs:\n", file_list)
-
+        
         try:
             while file_list:
                 dist_file = file_list.pop().strip()
@@ -85,11 +85,7 @@ class RunStuff():
                 write.writerow(file_list) 
 
        
-    def run_calcSingleSDRs(self, 
-                           input_files, 
-                           pop_info,
-                           SSDR_output_dir,
-                           save_unprocessed):
+    def run_calcSingleSDRs(self):
         
         """
         Save one file for each gene. 
@@ -102,6 +98,11 @@ class RunStuff():
             ...     ...           ...
             
         """
+
+        input_files = self.config_file['input_files']
+        pop_info = self.config_file['pop_info']
+        SSDR_output_dir = self.config_file['SSDR_output_dir']
+        save_unprocessed = self.config_file['save_unprocessed']
                
         file_list = self.make_filelist(input_files)
 
@@ -146,12 +147,7 @@ class RunStuff():
                 write.writerow(file_list) 
 
        
-    def run_calcSDV(self, 
-                    input_files,
-                    pop_info,    
-                    SDVsuper_output,
-                    SDVsub_output,
-                    save_unprocessed):
+    def run_calcSDV(self):
         """
         Input: 
             input_files: path to files containing cophenetic distance matrices
@@ -169,7 +165,13 @@ class RunStuff():
         Output: 
             Writes SDR to file.         
         """
-
+        
+        input_files = self.config_file['input_files']
+        pop_info = self.config_file['pop_info']
+        SDVsuper_output = self.config_file['SDVsuper_output']
+        SDVsub_output = self.config_file['SDVsub_output']
+        save_unprocessed = self.config_file['save_unprocessed']
+            
         file_list = self.make_filelist(input_files)
 
         ind = 1
@@ -263,9 +265,24 @@ class RunStuff():
 
        
             
+    
+    def main(self):
+        
+        if self.func == "calcSDR":
+            self.run_calcSDR()
+        elif self.func == "calcSDV":
+            self.run_calcSDV()
+        elif self.func == "calcSingleSDRs":
+            self.run_calcSingleSDRs()
+        else: 
+            print("Not a valid option.")
 
 if __name__ == '__main__':
-    pass
+    
+    configFilepath = sys.argv[1]    
+    run = RunStuff(configFilepath)
+    run.main()
+    
     
 # =============================================================================
 #     SDR
