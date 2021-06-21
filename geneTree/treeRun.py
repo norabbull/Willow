@@ -20,10 +20,14 @@ class RunStuff():
 
     def make_filelist(self, input_files):
 
-        
-        if isinstance(input_files, str):     
-            files = [join(input_files, f) for f in os.listdir(input_files) 
-                         if isfile(join(input_files, f))]
+        if '.csv' not in input_files:
+            if isinstance(input_files, str):     
+                files = [join(input_files, f) for f in os.listdir(input_files) 
+                             if isfile(join(input_files, f))]
+        else: 
+            files = pd.read_csv(input_files, header = None)
+            files = list(files.iloc[0])
+            
         return files
 
     def run_calcSDR(self,
@@ -34,12 +38,7 @@ class RunStuff():
                     save_unprocessed):
         
 
-        if '.csv' not in input_files:
-            file_list = self.make_filelist(input_files)
-
-        else: 
-            file_list = pd.read_csv(input_files, header = None)
-            file_list = list(file_list[0])
+        file_list = self.make_filelist(input_files)
             
         ind = 0
         ind_len = len(file_list)
@@ -86,8 +85,6 @@ class RunStuff():
                 write.writerow(file_list) 
 
        
-
-
     def run_calcSingleSDRs(self, 
                            input_files, 
                            pop_info,
@@ -105,14 +102,9 @@ class RunStuff():
             ...     ...           ...
             
         """
-        
-        if '.csv' not in input_files:
-            file_list = self.make_filelist(input_files)
+               
+        file_list = self.make_filelist(input_files)
 
-        else: 
-            file_list = pd.read_csv(input_files, header = None)
-            file_list = list(file_list[0])
-            
         ind = 1
         ind_len = len(file_list)
             
@@ -131,11 +123,7 @@ class RunStuff():
                 
                 supSDRs = tree.getSingleSuperSDRs()
                 subSDRs = tree.getSingleSubSDRs()
-                
-                # print("Super SDR: ", supSDRs)
-                # print("Sub SDR: ", subSDRs)
-                
-                # TEST THIS WORKS
+
                 df_sup = pd.DataFrame([['super', pop, val] for pop, val in supSDRs.items()],
                                    columns=['level', 'pop', 'singleSDR'])
                 df_sub = pd.DataFrame([['sub', pop, val] for pop, val in subSDRs.items()],
@@ -181,14 +169,9 @@ class RunStuff():
         Output: 
             Writes SDR to file.         
         """
-        print(input_files)
-        if '.csv' not in input_files:
-            file_list = self.make_filelist(input_files)
 
-        else: 
-            file_list = pd.read_csv(input_files, header = None)
-            file_list = list(file_list[0])
-            
+        file_list = self.make_filelist(input_files)
+
         ind = 1
         ind_len = len(file_list)
             
@@ -249,10 +232,7 @@ class RunStuff():
         """
         pass
         # # List of files
-        # if isinstance(cd_file, str):     
-        #     file_list = [join(cd_file, f) for f in listdir(cd_file) if isfile(join(cd_file, f))]
-        # else:            # Continue from disruption
-        #     file_list = self.cd_file.copy()
+        # file_list = self.make_filelist(input_files)
     
         # ind = 0
         # print("Files to process:\n", file_list)
@@ -353,19 +333,21 @@ if __name__ == '__main__':
     # run.run_calcSingleSDRs(
     #     input_files = input_files, 
     #     pop_info = pop_info,
-    #     SSDR_output_dir = SSDR_output_dir,
+    #     SSDR_output_dir = SSDR_output_dir
     #     save_unprocessed = save_unprocessed)
     
     # Real run
         
     redhood_input_files =  'E:\\Master\\cophenetic_dists'
+    continue_files1 = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SSDRcalc_17.06.2021_17.27.csv'
+
     pop_info = 'E:\\Master\\otherTreeData\\phydist_population_classes.tsv'
     SSDR_output_dir = 'E:\\Master\\current_run\\singleSDRs\\'
     save_unprocessed = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SSDRcalc_{0}.csv'.format(datetime.now().strftime("%d.%m.%Y_%H.%M"))
     
     run = RunStuff()
     
-    run.run_calcSingleSDRs(input_files = redhood_input_files, 
+    run.run_calcSingleSDRs(input_files = continue_files1, 
                           pop_info = pop_info, 
                           SSDR_output_dir = SSDR_output_dir,
                           save_unprocessed = save_unprocessed

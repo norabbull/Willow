@@ -89,26 +89,53 @@ class TestTreeFunctions(unittest.TestCase):
 
     def test_getSampleInfo():
         """
-        TO FINISH
+        OK.
         """
         test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
         pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
 
         tree = treeInfo()
         tree.setup(test_gene_small, pop_info)
+        dist_mat = tree.getDistMat()
         info = tree.getSampleInfo()
         
-        #unfinished
-        col = 0
-        row_i = 1
-        supName1 = info[col][1]
-        supName2 = info[row_i][1]
-        subName1 = info[col][2]
-        subName2 = info[row_i][2]
-    
-        return info
+        assert info[2][1] =='EUR'
+        assert info[2][2] =='GBR'
+        assert list(info.items())[-1][-1][-1] == 'ESN'
 
-    
+    def test_makePsuedoPops():
+        """
+        OK
+        """
+        test_gene = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_subset\\ENSG00000001167___NFYA___CopD.csv'
+        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        
+        num_pops_tests = [6,17]
+        for num_pops in num_pops_tests:
+          
+            tree = treeInfo()
+            tree.setup(test_gene, pop_info)
+            info = tree.getSampleInfo()
+            dist_mat = tree.getDistMat()
+            tree.makePsuedoPops(num_pops)
+            
+            num_samples = len(dist_mat) / num_pops
+            
+            all_groups = []
+            for ind, el in info.items():
+                all_groups.append(el[-1])
+            
+            all_groups = pd.Series(all_groups)
+            all_groups.value_counts()
+            
+            assert len(all_groups) == len(dist_mat)
+            assert sum(all_groups.value_counts()) == len(dist_mat)
+            
+            num_samples = int(round(num_samples))
+            for val in all_groups.value_counts():
+                assert val in [num_samples, num_samples+1, num_samples-1]
+            
+            
     def test_calcPopDists():
         """
         OK.

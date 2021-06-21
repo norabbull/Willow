@@ -104,18 +104,20 @@ round(np.array(list(singleSuperSDR.values())).var(), 4)
 round(np.array(self.singleSubSDR.values()).var(), 4)
 
 
-
+# Putt inn i test for run_calcSSDR()
 tree = treeMetrics()
 test_genes = ['E:/Master/cophenetic_dists/ENSG00000000938___FGR___CopD.csv',
              'E:/Master/cophenetic_dists/ENSG00000134183___GNAT2___CopD.csv',
              'E:/Master/cophenetic_dists/ENSG00000105669___COPE___CopD.csv']
 test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
 pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+SSDR_output_dir = 'E:\\Master\\test_runs\\singleSDR_test\\'
 
 tree.setup(test_genes[0], pop_info)
 tree.calcSingleSDRs()
 supSDRs = tree.getSingleSuperSDRs()
 subSDRs = tree.getSingleSubSDRs()    
+dist_mat = tree.getDistMat()
 
 df_sup = pd.DataFrame([['super', pop, val] for pop, val in supSDRs.items()],
                    columns=['level', 'pop', 'singleSDR'])
@@ -124,8 +126,12 @@ df_sub = pd.DataFrame([['sub', pop, val] for pop, val in subSDRs.items()],
                    columns=['level', 'pop', 'singleSDR'])
 
 
+df = pd.concat([df_sup, df_sub], ignore_index = True, axis = 0)
 
-
+type(tree.getGeneName())
+SSDR_output_file = (SSDR_output_dir + 'SSDR_' + tree.getGeneName()) +'.csv'
+        
+df.to_csv(SSDR_output_file, index = False, header = True)  # Test
 
 
 

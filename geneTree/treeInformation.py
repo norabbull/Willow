@@ -10,7 +10,7 @@ import re
 from os import listdir
 from os.path import isfile, join
 import csv   
-#from SDR_SDV import calculateSDRandSDV
+from random import randrange
 
 class treeInfo:
     
@@ -31,7 +31,10 @@ class treeInfo:
         self.gene_name = None
         self.pop_dists = None
         self.mean_pop_dists = None
-        self.mean_type_dists = None
+        self.mean_type_dists = None    
+        self.psuedo_group_sizes = None
+        
+        
     
     def setup(self, dist_mat_file, pop_info_file):
         self.setDistMat(dist_mat_file)
@@ -93,12 +96,49 @@ class treeInfo:
             superName = re.sub('_.*$','', sample)
             
             self.sample_info[ind] = [sample, superName, subName]
-     
+    
+    def makePsuedoPops(self, num_pops):
+        """
+        Make randomly defined population groups. 
+        To be used for creatin gnull-distribution.
+        
+        num_groups = number of psuedo-populations to create. 
+        
+        How: 
+            - Create group identifiers
+            - Randomly add group identifier to sample name
+            - Set psuedoSuperPops and psuedoSubPops groups. This
+            infor will be used instead of sample info in calculations.
+            (Probably have to expand other functions to allow this.)
+            - Add pseudo-info to sample info!
+        """
+        
+        # Create psuedo group indeifiers               
+
+        psPops = [f'pseudo{num}/{num_pops}' for num in range(num_pops)]
+        num_samples = int(round(len(self.sample_info) / num_pops, 0))
+        psPops = psPops*num_samples
+        
+        for ind in range(len(self.sample_info)):
+            self.sample_info[ind].append(psPops.pop(randrange(len(psPops))))
+        
+        
+    def setSampleInfoDesc(self, num_pops): 
+        
+        self.psuedo_pop_sizes.append(num_pops)
+        
+        
+                
     def getSampleInfo(self): return self.sample_info
     def getPopInfo(self): return self.pop_info
     def getGeneName(self): return self.gene_name
     def getDistMat(self): return self.dist_mat 
-  
+    def getSampleInfoDesc(self):
+        num_def_pops = len(self.sample_info[0]) - 1
+        print(f"There are {num_def_pops} defined.")
+        if self.psuedo_pop_sizes():
+            print("The psuedo-pop sizes are:  {self.psuedo_pop_sizes}.")
+            
     
     #%% 
     
