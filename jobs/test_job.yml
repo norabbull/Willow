@@ -1,6 +1,0 @@
----
- func: 'calcTest' 
- input_files: '/mnt/c/Users/norab/Master/Data/real_tree_data/dist_mat_subset'
- pop_info: '/mnt/c/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
- test_output: '/mnt/c/Users/norab/Master/Data/test_runs/test_datetime.csv'
- save_unprocessed: '/mnt/c/Users/norab/Master/Data/runstop_save/unprocessed_files_test_datetime.csv'

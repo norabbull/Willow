@@ -1,6 +1,0 @@
----
- func: 'calcSingleSDRs'
- input_files: 'E:\\Master\\cophenetic_dists'
- pop_info: 'E:\\Master\\otherTreeData\\phydist_population_classes.tsv'
- SSDR_output_dir: 'E:\\Master\\current_run\\singleSDRs\\'
- save_unprocessed: 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SSDRcalc_datetime.csv'
