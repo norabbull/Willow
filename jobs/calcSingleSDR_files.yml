@@ -1,0 +1,7 @@
+---
+ func: 'calcSDV'
+ input_files: 'E:\\Master\\cophenetic_dists'
+ pop_info: 'E:\\Master\\otherTreeData\\phydist_population_classes.tsv'
+ SDVsuper_output: 'E:\\Master\\current_run\\SDVsuper_datetime.csv'
+ SDVsub_output: 'E:\\Master\\current_run\\SDVsub_datetime.csv'
+ save_unprocessed: 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SSDRcalc_datetime.csv'

@@ -1,0 +1,95 @@
+---
+title: "Inspect_trees"
+output: html_document
+---
+
+
+```{r}
+library(ape)
+```
+
+
+
+## Inspect single trees: bottom right
+
+
+Define function to calculate percent (0 to 1) of non-zero pairwise values 
+in tree. Takes path to file as argument. 
+```{r}
+calc_nonZero <- function(file) {
+  
+    tree<-read.tree(file)
+    
+    if(is.null(tree)) {
+        return(NULL)
+    } else {
+        pairDist <- cophenetic(tree)
+      
+        # Calculate number of comparisons to find proportions:
+        return( (length(which(pairDist != 0)) / 2) / choose(nrow(pairDist), 2))
+    }
+}
+```
+
+
+Load single trees: 
+```{r}
+tree1 <-read.tree("C:/Users/norab/MasterDisaster/Data/real_tree_data/ninja_trees/ENSG00000232062___DQA1_HUMAN__full_aln.tre")
+tree2 <-read.tree("C:/Users/norab/MasterDisaster/Data/real_tree_data/ninja_trees/ENSG00000144118___RALB_HUMAN__full_aln.tre")
+```
+
+
+Multiple trees in folder 
+```{r}
+files <- list.files(path="C:/Users/norab/MasterDisaster/Data/real_tree_data/ninja_trees", pattern="*.tre", full.names=TRUE, recursive=FALSE)
+treeDistVals <- sapply(files, calc_nonZero)
+```
+
+Write to file
+```{r}
+# write to file
+dists <- data.frame(unlist(treeDistVals))
+write.csv(dists, file = "totalDistancesRefined.txt", sep = " ", row.names = TRUE)
+```
+
+Time it
+```{r}
+for (i in 1:10) {
+  
+    time <- system.time({
+    
+    treeDistVals <- lapply(files, calc_nonZero)
+    })
+    
+    print(time)
+}
+```
+
+
+Number of trees with 0 distance values:
+```{r}
+sum(sapply(treeDistVals, function(y) pairlist %in% y))
+length(which(dists == 0))           # Zero-values
+length(treeDistVals) - nrow(dists)  # NA values (not transfered to dists)
+```
+
+Print-out checks
+```{r}
+nrow(pairDist) * ncol(pairDist)
+length(pairDist)
+length(pairDist)
+choose(nrow(pairDist), 2)
+length(which(pairDist != 0)) / 2
+```
+
+
+Pairwise distances for one tree: 
+```{r}
+pairDist <- cophenetic(tree1)
+```
+
+
+Create heatmap: 
+```{r}
+heatmap(pairDist)
+```
