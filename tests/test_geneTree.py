@@ -6,40 +6,24 @@ Created on Tue Jun  1 08:53:43 2021
 """
 
 import pandas as pd
-import numpy as np
-import pytest
-import unittest
 
-from geneTree.treeInformation import treeInfo
-from geneTree.treeMetrics import treeMetrics
 
-#%% 
+from src.treeInformation import treeInfo
+from src.treeMetrics import treeMetrics
 
-class TestTreeFunctions(unittest.TestCase):
+class TestTreeFunctions:   
     
-    
-    def __init__():
+    def __init__(self):
         
         pass
         
-    def setup_small_tree():
-        
-        # test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
-        # pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
-        # global test_gene_small
-        # global pop_info
-        # tree = treeInfo()
-        # tree.setup()
-        # return tree
-        pass
-
-    def test_setGeneName():
+    def test_setGeneName(self):
         """
         OK.
         """
         test_gene1 = 'E:/Master/cophenetic_dists/ENSG00000188324___OR6C6___CopD.csv'
         test_gene2 = 'E:/Master/cophenetic_dists/ENSG00000000938___FGR___CopD.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
     
         tree1 = treeInfo()
         tree1.setup(test_gene1, pop_info)
@@ -48,13 +32,12 @@ class TestTreeFunctions(unittest.TestCase):
         
         assert tree1.getGeneName() == "ENSG00000188324___OR6C6"
         assert tree2.getGeneName() == "ENSG00000000938___FGR"
-
     
-    def test_setPopInfo():
+    def test_setPopInfo(self):
         """
         OK.
         """
-        pop_info_file = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        pop_info_file = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
         tree = treeInfo()
         tree.setPopInfo(pop_info_file)
         pop_info = tree.getPopInfo()
@@ -69,16 +52,16 @@ class TestTreeFunctions(unittest.TestCase):
                        'GBR', 'KHV', 'GIH', 'FIN', 'LWK', 'JPT', 
                        'CLM', 'CEU'}
     
-    def test_setSampleInfo():
+    def test_setSampleInfo(self):
         """
         OK.
         """
         test_gene = 'E:/Master/cophenetic_dists/ENSG00000188324___OR6C6___CopD.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
         tree = treeInfo()
         tree.setup(test_gene, pop_info)
         
-        dist_mat = tree.getDistMat()
+        # dist_mat = tree.getDistMat()   -- used for visual inspection
         sample_info = tree.getSampleInfo()
         
         assert isinstance(sample_info, dict)
@@ -86,29 +69,28 @@ class TestTreeFunctions(unittest.TestCase):
         assert sample_info[0] == ['EUR___GBR___HG00261', 'EUR', 'GBR']
         assert sample_info[200] == ['EAS___CHS___HG00409', 'EAS', 'CHS']
 
-
-    def test_getSampleInfo():
+    def test_getSampleInfo(self):
         """
         OK.
         """
-        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
 
         tree = treeInfo()
         tree.setup(test_gene_small, pop_info)
-        dist_mat = tree.getDistMat()
+        # dist_mat = tree.getDistMat() -- used for visual inspection
         info = tree.getSampleInfo()
         
         assert info[2][1] =='EUR'
         assert info[2][2] =='GBR'
         assert list(info.items())[-1][-1][-1] == 'ESN'
 
-    def test_makePsuedoPops():
+    def test_makePsuedoPops(self):
         """
         OK
         """
-        test_gene = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_subset\\ENSG00000001167___NFYA___CopD.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        test_gene = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_subset\\ENSG00000001167___NFYA___CopD.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
         
         num_pops_tests = [6,17]
         for num_pops in num_pops_tests:
@@ -134,15 +116,14 @@ class TestTreeFunctions(unittest.TestCase):
             num_samples = int(round(num_samples))
             for val in all_groups.value_counts():
                 assert val in [num_samples, num_samples+1, num_samples-1]
-            
-            
-    def test_calcPopDists():
+                       
+    def test_calcPopDists(self):
         """
         OK.
         
         """
-        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
     
         tree = treeInfo()
         tree.setup(test_gene_small, pop_info)
@@ -165,19 +146,18 @@ class TestTreeFunctions(unittest.TestCase):
         assert LWK_test == [subWithSum_LWK, 3]   # 3 LWK samples, 3 comparisons
         assert CLM_test == [subBetSum_CLM, 9]    # 1 CLM sample, 9 comparisons 
 
-
-    def test_calcMeanTypeDists():
+    def test_calcMeanTypeDists(self):
         """
         OK.
 
         """
-        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
     
         tree = treeMetrics()
         tree.setup(test_gene_small, pop_info)
-        dist_mat = tree.getDistMat()
-        pop_dists = tree.getPopDists()
+        # dist_mat = tree.getDistMat()     -- used for visual inspection
+        # pop_dists = tree.getPopDists()   -- used for visual inspection
         meanTypeDists = tree.getMeanTypeDists()
         
         # Values read from dist_mat
@@ -191,16 +171,15 @@ class TestTreeFunctions(unittest.TestCase):
         assert subWith == meanTypeDists['subWith']
         assert subBet == meanTypeDists['subBet']
         
-
-    def test_calcMeanPopDists():
+    def test_calcMeanPopDists(self):
         """
         OK.
         """
-        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'    
+        test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'    
         tree = treeMetrics()
         tree.setup(test_gene_small, pop_info)
-        dist_mat = tree.getDistMat()
+        # dist_mat = tree.getDistMat()    -- used for visual inspection
         meanPopDists = tree.getMeanPopDists()
         
         # Values read from dist_mat
@@ -214,14 +193,13 @@ class TestTreeFunctions(unittest.TestCase):
         assert subWithGBR == meanPopDists['subWith']['GBR']
         assert subBetSTU == meanPopDists['subBet']['STU']
         
-
-    def test_calcSDR():
+    def test_calcSDR(self):
         """
         OK.
 
         """
-        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
     
         tree = treeMetrics()
         tree.setup(test_gene_small, pop_info)
@@ -244,17 +222,16 @@ class TestTreeFunctions(unittest.TestCase):
         assert subSDR == treeSubSDR
         assert supSDR == treeSupSDR
         
-
-    def test_calcSingleSDRs():
+    def test_calcSingleSDRs(self):
         """
         OK.
         """
-        test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\MIO_5x5.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
         
         tree = treeMetrics()
         tree.setup(test_gene_small, pop_info)
-        dist_mat = tree.getDistMat()        # Used to get values for manual calc
+        ## dist_mat = tree.getDistMat()        # used for visual inspection
         
         tree.calcSingleSDRs()
         singleSuperSDR = tree.getSingleSuperSDR()
@@ -274,21 +251,20 @@ class TestTreeFunctions(unittest.TestCase):
         SDR_GBR = round(mW / mB, 3)
         assert SDR_GBR == singleSubSDR['GBR']        
 
-
-    def test_calcSDV():
+    def test_calcSDV(self):       
         """
         OK.
         """
         test_gene = 'E:/Master/cophenetic_dists/ENSG00000175336___APOF___CopD.csv'
-        pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
     
         tree = treeMetrics()
         tree.setup(test_gene, pop_info)
         tree.calcSDV()
         
         # Manual calc:
-        singleSuperSDR = tree.getSingleSuperSDR()
-        singleSubSDR = tree.getSingleSubSDR()
+        # singleSuperSDR = tree.getSingleSuperSDR()   -- used for visual inspection
+        # singleSubSDR = tree.getSingleSubSDR()       -- used for visual inspection
             
         # Super
         mean = (0.422 + 0.79 + 0.202 + 0.455 + 0.138) / 5
@@ -314,48 +290,33 @@ class TestTreeFunctions(unittest.TestCase):
         
         assert tree.getSDVsub() == SDVsub_man         
         
-
-#%% 
-
-if __name__ == "__main__":
-    # Make one instance just to make a samller subset: 
+    def test_shuffleSampleInfo(self):
+        test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
+    
+        tree = treeInfo()
+        tree.setup(test_gene_small, pop_info)
+        # dist_mat = tree.getDistMat() -- used for visual inspection
+        info = tree.getSampleInfo()
         
-    # Specify paths to files
-    test_genes = ['E:/Master/cophenetic_dists/ENSG00000000938___FGR___CopD.csv',
-                 'E:/Master/cophenetic_dists/ENSG00000134183___GNAT2___CopD.csv',
-                 'E:/Master/cophenetic_dists/ENSG00000105669___COPE___CopD.csv']
-    test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
-    pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
-    
-
-    
-# =============================================================================
-#     Test claculateions with small dataframe. 
-#     Will check correctness by manual calculations
-# =============================================================================
-    test_files = {'pop_info': pop_info,
-                   'dist_mat':test_gene_small}
-    
-    small_tree = treeInfo()
-    small_tree.setup(test_files['dist_mat'], test_files['pop_info'])
-    test = small_tree.calcPopDists()
-    mat = small_tree.getDistMat()
-# =============================================================================
-#     Test full set
-# =============================================================================
-
-    tree1 = treeInfo(test_files1['dist_mat'], test_files1['pop_info'])
-    
-    mat = tree1.getDistMat()
-    
-    submat = mat.iloc[0:10,0:10]
-    
-    submat.to_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/FGR_10x10.csv')
-    submat2 = pd.read_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/FGR_10x10.csv', index_col = 0)
-
+        sup = tree.shuffleSampleInfo()
         
-        
-    tree = treeMetrics()
-    tree.setup('E:/Master/cophenetic_dists/ENSG00000003096___KLH13___CopD.csv', pop_info)
-    dist_mat = tree.getDistMat()
-        
+        assert info[2][1] =='EUR'
+        assert info[2][2] =='GBR'
+        assert list(info.items())[-1][-1][-1] == 'ESN'
+    
+# if __name__ == "__main__":
+    
+#     test = TestTreeFunctions()
+#     test.test_setGeneName()
+#     test.test_setPopInfo()
+#     test.test_setSampleInfo()
+#     test.test_getSampleInfo()
+#     test.test_makePsuedoPops()
+#     test.test_calcPopDists()
+#     test.test_calcMeanTypeDists()
+#     test.test_calcMeanPopDists()
+#     test.test_calcSDR()
+#     test.test_calcSDV()
+#     test.test_calcSingleSDRs()
+    
