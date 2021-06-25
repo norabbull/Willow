@@ -18,6 +18,8 @@ class RunStuff:
     
     def __init__(self, configFilepath):
         
+        configFilepath = configFilepath.strip()
+        
         with open(configFilepath, 'r') as c:
             self.config_file = yaml.safe_load(c)
             
@@ -37,10 +39,15 @@ class RunStuff:
     def run_calcSDR(self, random=False):
         
         input_files = self.config_file['input_files']
+        input_files = input_files.strip()
         pop_info = self.config_file['pop_info']
+        pop_info = pop_info.strip()
         SDRsuper_output = self.config_file['SDRsuper_output']
+        SDRsuper_output = SDRsuper_output.strip()
         SDRsub_output = self.config_file['SDRsub_output']
+        SDRsub_output = SDRsub_output.strip()
         save_unprocessed = self.config_file['save_unprocessed']
+        save_unprocessed = save_unprocessed.strip()
             
         file_list = self.make_filelist(input_files)
             
