@@ -19,7 +19,7 @@ test_genes = ['E:/Master/cophenetic_dists/ENSG00000000938___FGR___CopD.csv',
              'E:/Master/cophenetic_dists/ENSG00000164828___SUN1___CopD.csv',
              'E:/Master/cophenetic_dists/ENSG00000164654___MIO___CopD.csv']
 
-pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
     
 
 #%% 
@@ -35,10 +35,10 @@ tree1 = treeInfo(test_files1['dist_mat'], test_files1['pop_info'])
 mat = tree1.getDistMat()
 
 submat = mat.iloc[0:10,0:10]
-submat.to_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/FGR_10x10.csv')
+submat.to_csv('C:/Users/norab/Master/Data/real_tree_data/dist_mat_test/FGR_10x10.csv')
 
 # Check if equal: 
-submat2 = pd.read_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/FGR_10x10.csv', index_col = 0)
+submat2 = pd.read_csv('C:/Users/norab/Master/Data/real_tree_data/dist_mat_test/FGR_10x10.csv', index_col = 0)
 (submat == submat2).eq(True).all().all()
 
 
@@ -60,10 +60,10 @@ submat3['AMR___MXL___NA19758']['AMR___MXL___NA19795'] = 0.003
 submat3['AMR___MXL___NA19795']['AMR___MXL___NA19758'] = 0.003
 
 
-submat3.to_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/MIO_5x5.csv')
+submat3.to_csv('C:/Users/norab/Master/Data/real_tree_data/dist_mat_test/MIO_5x5.csv')
 
 # Check if equal: 
-submat4 = pd.read_csv('C:/Users/norab/MasterDisaster/Data/real_tree_data/dist_mat_test/MIO_5x5.csv', index_col = 0)
+submat4 = pd.read_csv('C:/Users/norab/Master/Data/real_tree_data/dist_mat_test/MIO_5x5.csv', index_col = 0)
 (submat3 == submat4).eq(True).all().all()
 
 
@@ -133,9 +133,9 @@ for file in unprocessed_genes:
 # Make list of unprocessed files from unprocessed files list file
 # =============================================================================
 
-redhood_input_files_continue2 = 'C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SDRcalc_09.06.2021_16.57.csv' 
+redhood_input_files_continue2 = 'C:\\Users\\norab\\Master\\Data\\runstop_save\\unprocessed_files_SDRcalc_09.06.2021_16.57.csv' 
 liste = pd.read_csv(redhood_input_files_continue2 , header = None, sep = ",",).transpose()
-liste.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\runstop_save\\unprocessed_files_SDRcalc_09.06.2021_16.57_update.csv' , 
+liste.to_csv('C:\\Users\\norab\\Master\\Data\\runstop_save\\unprocessed_files_SDRcalc_09.06.2021_16.57_update.csv' , 
              index = False,
              header = False)
 liste.to_csv(file_list, index = False,
@@ -175,9 +175,9 @@ SDRsub.to_csv('E:\\Master\\current_run\\SDRsub_all.csv', index = False, header =
 
 # Super:
 
-SDRsuper_all = pd.read_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsuper_all.csv',
+SDRsuper_all = pd.read_csv('C:\\Users\\norab\\Master\\Data\\SDR\\SDRsuper_all.csv',
                            index = False, header = False, names = ['gene', 'val'])
-SDRsub_all = pd.read_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsub_all.csv',
+SDRsub_all = pd.read_csv('C:\\Users\\norab\\Master\\Data\\SDR\\SDRsub_all.csv',
                          index = False, header = False, names = ['gene', 'val'])
 
 SDRsuper_07 = SDRsuper_all[SDRsuper_all['val'] <= 0.7]
@@ -190,18 +190,40 @@ SDRsuper_05 = SDRsuper_all[SDRsuper_all['val'] <= 0.5]
 SDRsub_05 = SDRsub_all[SDRsub_all['val'] <= 0.5]
 
 # Save 
-SDRsuper_07.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsuper_07.csv', 
+SDRsuper_07.to_csv('C:\\Users\\norab\\Master\\Data\\SDR\\SDRsuper_07.csv', 
                    index = False, header = False)
-SDRsub_07.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsub_07.csv', 
+SDRsub_07.to_csv('C:\\Users\\norab\\Master\\Data\\SDR\\SDRsub_07.csv', 
                    index = False, header = False)
-SDRsuper_06.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsuper_06.csv', 
+SDRsuper_06.to_csv('C:\\Users\\norab\\Master\\Data\\SDR\\SDRsuper_06.csv', 
                    index = False, header = False)
-SDRsub_06.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsub_06.csv', 
+SDRsub_06.to_csv('C:\\Users\\norab\\Master\\Data\\SDR\\SDRsub_06.csv', 
                    index = False, header = False)
-SDRsuper_05.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsuper_05.csv', 
+SDRsuper_05.to_csv('C:\\Users\\norab\\Master\\Data\\SDR\\SDRsuper_05.csv', 
                    index = False, header = False)
-SDRsub_05.to_csv('C:\\Users\\norab\\MasterDisaster\\Data\\SDR\\SDRsub_05.csv', 
+SDRsub_05.to_csv('C:\\Users\\norab\\Master\\Data\\SDR\\SDRsub_05.csv', 
                    index = False, header = False)
+
+#%%  Make data files ready for inspecton 
+
+
+# SDR
+SDRsuper = pd.read_csv('C:/Users/norab/Master/Data/SDR/SDRsuper_all.csv', header = None, names = ['gene', 'value'])
+SDRsub = pd.read_csv('C:/Users/norab/Master/Data/SDR/SDRsub_all.csv', header = None, names = ['gene', 'value'])
+SDRpsuedo = pd.read_csv('C:/Users/norab/Master/Data/SDRnullDist/nullDistSDRsub_23.06.2021_09.14.csv', header = None, names = ['gene', 'value'])
+SDRsuper.dropna(inplace=True)
+SDRsub.dropna(inplace=True)
+SDRpsuedo.dropna(inplace=True)
+
+# Add level column
+SDRsuper.insert(0, 'level', 'super')
+SDRsub.insert(0, 'level', 'sub')
+SDRpsuedo.insert(0, 'level', 'psuedo')
+
+SDRall = pd.concat([SDRsub, SDRsuper, SDRpsuedo])
+
+SDRall.to_csv('C:/Users/norab/Master/Data/SDR/SDR_all_shortPsuedo.csv')
+
+
 
 
 

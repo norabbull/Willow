@@ -7,7 +7,7 @@ Created on Fri May 21 08:32:27 2021
 
 import pandas as pd
 import re
-from random import randrange, shuffle
+from random import shuffle
 
 class treeInfo:
     
@@ -30,6 +30,7 @@ class treeInfo:
         self.mean_pop_dists = None
         self.mean_type_dists = None    
         self.psuedo_group_sizes = None
+        self.random_pops = False
                 
     def setup(self, dist_mat_file, pop_info_file):
         self.setDistMat(dist_mat_file)
@@ -130,6 +131,8 @@ class treeInfo:
             val[1] = sup.pop()
             val[2] = sub.pop()
             self.sample_info[key] = val
+        
+        self.randomPops = True
         
         
                

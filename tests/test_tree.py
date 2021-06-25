@@ -7,6 +7,7 @@ Created on Tue Jun  1 08:53:43 2021
 
 import pandas as pd
 import copy
+from copy import deepcopy
 
 from src.treeInformation import treeInfo
 from src.treeMetrics import treeMetrics
@@ -304,6 +305,27 @@ class TestTreeFunctions:
         
         assert info1 != info2
     
+    def test_calcSDRrandom(self):
+        test_gene = 'E:/Master/cophenetic_dists/ENSG00000175336___APOF___CopD.csv'
+        pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
+        
+        tree = treeMetrics()
+        tree.setup(test_gene, pop_info)
+        sample_info = tree.getSampleInfo()        
+        sample_info_orig = deepcopy(sample_info)
+        tree.calcSDR()
+        subSDRorig = tree.getSDRsub()
+        superSDRorig = tree.getSDRsuper()
+
+        # New tree with shuffled shit
+        tree2 = treeMetrics()
+        tree2.setup(test_gene, pop_info)
+        tree2.shuffleSampleInfo()
+        tree2.calcSDR()
+        subSDRtrand = tree2.getSDRsub()
+        superSDRrand = tree2.getSDRsuper()
+        
+        
 # if __name__ == "__main__":
     
 #     test = TestTreeFunctions()

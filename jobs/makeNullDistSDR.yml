@@ -1,0 +1,7 @@
+---
+ func: 'calcNullSDR'
+ input_files: 'E:/Master/cophenetic_dists/'
+ pop_info: 'E:/Master/otherTreeData/phydist_population_classes.tsv'
+ SDRsuper_output: 'E:\\Master\\current_run\\nullDistSDRsuper_datetime.csv'
+ SDRsub_output: 'E:\\Master\\current_run\\nullDistSDRsub_datetime.csv'
+ save_unprocessed: 'C:\\Users\\norab\\Master\\Data\\runstop_save\\unprocessed_files_nullDistSDRcalc_datetime.csv'

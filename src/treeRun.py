@@ -12,7 +12,7 @@ import yaml
 import sys
 import os
 from os.path import isfile, join
-from src.treeMetrics import treeMetrics
+from treeMetrics import treeMetrics
 
 class RunStuff:
     
@@ -42,7 +42,6 @@ class RunStuff:
         SDRsub_output = self.config_file['SDRsub_output']
         save_unprocessed = self.config_file['save_unprocessed']
             
-            
         file_list = self.make_filelist(input_files)
             
         ind = 0
@@ -70,6 +69,7 @@ class RunStuff:
                 
                 print("Super SDR: ", supSDR)
                 print("Sub SDR: ", subSDR)
+                print("1st sample: ", tree.getSampleInfo()[0])
                 
                 ind += 1
                 
@@ -256,47 +256,46 @@ class RunStuff:
         print("Gene name: ", tree.getGeneName())
         print("Sample info: ", tree.getSampleInfo())
         
-    def run_makeNullDistribution(self):
+
         
-        
-    def run_CalcNonZeroForPop(self):
-        """
-        Input: input file for cd files
-        Output: file path to store values. 
-            Three columns: gene name, pop and nonZero pop value. 
-        Return: None
+    # def run_CalcNonZeroForPop(self):
+    #     """
+    #     Input: input file for cd files
+    #     Output: file path to store values. 
+    #         Three columns: gene name, pop and nonZero pop value. 
+    #     Return: None
     
-        """
-        pass
-        # # List of files
-        # file_list = self.make_filelist(input_files)
+    #     """
+    #     pass
+    #     # # List of files
+    #     # file_list = self.make_filelist(input_files)
     
-        # ind = 0
-        # print("Files to process:\n", file_list)
+    #     # ind = 0
+    #     # print("Files to process:\n", file_list)
         
-        # try:
-        #     while file_list:
-        #         dist_file = file_list.pop().strip()
-        #         print("File processed: ", dist__file)
-        #         print("Number: ", ind)
+    #     # try:
+    #     #     while file_list:
+    #     #         dist_file = file_list.pop().strip()
+    #     #         print("File processed: ", dist__file)
+    #     #         print("Number: ", ind)
                 
-        #         # make tree
-        #         tree = treeInfo(dist_file,
-        #                         pop_info)
+    #     #         # make tree
+    #     #         tree = treeInfo(dist_file,
+    #     #                         pop_info)
         
-        #         result = tree.calcNonZerosForPops(popType='all', percent = True)
+    #     #         result = tree.calcNonZerosForPops(popType='all', percent = True)
                 
-        #         with open(output_file, 'a') as f:
-        #             result.to_csv(output_file, mode = 'a', index_label = 'pop', header=f.tell()==0)
-        #         ind += 1
-        #         except: 
-            # # Write remaining filelist to file
-            # print("Disrupted.")
-            # print("Last file processed:", dist_file)
+    #     #         with open(output_file, 'a') as f:
+    #     #             result.to_csv(output_file, mode = 'a', index_label = 'pop', header=f.tell()==0)
+    #     #         ind += 1
+    #     #         except: 
+    #         # # Write remaining filelist to file
+    #         # print("Disrupted.")
+    #         # print("Last file processed:", dist_file)
             
-            # with open(save_unprocessed, 'w') as f: 
-            #     write = csv.writer(f) 
-            #     write.writerow(file_list) 
+    #         # with open(save_unprocessed, 'w') as f: 
+    #         #     write = csv.writer(f) 
+    #         #     write.writerow(file_list) 
 
        
             
@@ -309,6 +308,8 @@ class RunStuff:
             self.run_calcSDV()
         elif self.func == "calcSingleSDRs":
             self.run_calcSingleSDRs()
+        elif self.func == "calcNullSDR":
+            self.run_calcSDR(random = True)
         elif self.func == "calcTest":
             self.run_calcTest()
             

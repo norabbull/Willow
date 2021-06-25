@@ -8,9 +8,7 @@ Created on Thu May  6 11:33:03 2021
 
 import pandas as pd
 import numpy as np
-from src.treeInformation import treeInfo
-import sys
-sys.path
+from treeInformation import treeInfo
 
 class treeMetrics(treeInfo):
     
@@ -161,8 +159,14 @@ class treeMetrics(treeInfo):
         
         # Dette blir feil. Du tar gjennomsnitt av gjennomsnitt. 
         # Må bruke dists direkte, legge sammen alle og dele på total count. 
-        if not self.mean_type_dists: self.calcMeanTypeDists()
-
+        if not self.mean_type_dists: 
+            self.calcMeanTypeDists()
+        elif (self.mean_type_dists and self.randomPops):
+            self.calcMeanTypeDists()
+        
+        print("Mean type dists: ")
+        print(self.mean_type_dists)
+            
         if self.mean_type_dists['supBet']:
             self.SDRsuper = round(self.mean_type_dists['supWith'] / 
                                   self.mean_type_dists['supBet'], 6)
@@ -364,7 +368,7 @@ class treeMetrics(treeInfo):
     def getSingleSuperSDRs(self): return self.singleSuperSDRs
     def getSingleSubSDRs(self): return self.singleSubSDRs
     def getSDRsuper(self): return self.SDRsuper
-    def getSDRsub(self): return self.SDRsuper
+    def getSDRsub(self): return self.SDRsub
     def getSDVsuper(self): return self.SDVsuper
     def getSDVsub(self): return self.SDVsub
 

@@ -7,7 +7,7 @@ Created on Wed Jun  2 13:13:50 2021
 
 import unittest
 from datetime import datetime
-from geneTree.treeRun import RunStuff 
+from src.treeRun import RunStuff 
 
 #%% 
 
@@ -63,6 +63,14 @@ class TestRunStuff(unittest.TestCase):
             SSDR_output_dir = SSDR_output_dir,
             unprocessed_files = unprocessed_files)
         
+    
+    def test_runCalcSDRnullDist():
+        
+        config_file = 'E:/Master/test_runs/SDR_nullDist_test/test_25.06.21/test_makeNullDistSDR.yml'
+        run = RunStuff(config_file)
+        run.main()
+
+    
         
 #%% Runs
 
