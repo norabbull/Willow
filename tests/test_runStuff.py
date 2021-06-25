@@ -33,7 +33,7 @@ class TestRunStuff(unittest.TestCase):
         
    
         
-    
+     
     def test_runCalcSDR():
         
         input_files = 'E:\\Master\\test_runs\\cophenetic_dists_selection'

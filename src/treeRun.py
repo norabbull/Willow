@@ -309,7 +309,9 @@ class RunStuff:
         elif self.func == "calcSingleSDRs":
             self.run_calcSingleSDRs()
         elif self.func == "calcNullSDR":
-            self.run_calcSDR(random = True)
+            num_rand_trees = self.config_file['num_rand_trees']
+            for _ in range(self.num_rand_trees):
+                self.run_calcSDR(random = True)
         elif self.func == "calcTest":
             self.run_calcTest()
             
