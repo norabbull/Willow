@@ -63,11 +63,12 @@ class RunStuff:
         
         for dist_file in file_list:
             try:
-            
+                
                 dist_file = dist_file.strip()
                 
                 print("File processed: ", dist_file)   # TO DO: convert to log  
                 print(f"Number: {ind} / {ind_len}")
+                ind += 1
                 
                 tree = treeMetrics()
                 tree.setup(dist_file, pop_info)
@@ -84,7 +85,7 @@ class RunStuff:
                 print("Sub SDR: ", subSDR)
                 print("1st sample: ", tree.getSampleInfo()[0])
                 
-                ind += 1
+                
                 
                 supSDR = [tree.getGeneName(), supSDR]
                 subSDR = [tree.getGeneName(), subSDR]
