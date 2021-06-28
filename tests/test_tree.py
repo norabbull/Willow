@@ -130,6 +130,10 @@ class TestTreeFunctions:
         tree.setup(test_gene_small, pop_info)
         tree.calcPopDists() 
         pop_dists = tree.getPopDists()
+        dist_mat = tree.getDistMat()
+        
+        for i in range(1, len(dist_mat)):
+            print(i)
         
         AFR_test = pop_dists['supWith']['AFR']; AFR_test[0] = round(AFR_test[0], 6)
         EUR_test = pop_dists['supBet']['EUR']; EUR_test[0] = round(EUR_test[0], 6)

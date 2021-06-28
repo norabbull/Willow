@@ -56,7 +56,7 @@ class RunStuff:
             
         file_list = self.make_filelist(input_files)
             
-        ind = 0
+        ind = 1
         ind_len = len(file_list)
             
         print("Files to procescs:\n", file_list)
@@ -83,8 +83,6 @@ class RunStuff:
                 print("Super SDR: ", supSDR)
                 print("Sub SDR: ", subSDR)
                 print("1st sample: ", tree.getSampleInfo()[0])
-                
-                
                 
                 supSDR = [tree.getGeneName(), supSDR]
                 subSDR = [tree.getGeneName(), subSDR]
