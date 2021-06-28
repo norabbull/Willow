@@ -43,7 +43,7 @@ class treeMetrics(treeInfo):
         subBetSums = {pop : [0,0] for pop in self.pop_info[1]}
 
         # Iter upper triangular dist_mat
-        row_length = len(dist_mat-1)
+        row_length = len(dist_mat)-1
         row_start = 1
         for col in range(row_length):
             for row in range(row_start, row_length):
