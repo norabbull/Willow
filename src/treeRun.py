@@ -346,8 +346,11 @@ class RunStuff:
 
 if __name__ == '__main__':
     
-    #configFilepath = sys.argv[1]
-    configFilepath = 'E:/Master/jobs/debug_calcSDRnullDist_28.06.yml'
+    # Test on lenovo computer
+    #configFilepath = 'E:/Master/jobs/debug_calcSDRnullDist_28.06.yml'
+    
+    configFilepath = sys.argv[1]
+    
     run = RunStuff(configFilepath)
     run.main()
     
