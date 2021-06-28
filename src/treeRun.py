@@ -104,7 +104,8 @@ class RunStuff:
             with open(save_unprocessed, 'w+') as f: 
                 write = csv.writer(f) 
                 write.writerow(file_list)
-        
+                
+            file_list.remove(dist_file)
             pass
 
        
