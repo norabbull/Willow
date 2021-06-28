@@ -14,6 +14,8 @@ import os
 from os.path import isfile, join
 from treeMetrics import treeMetrics
 import logging
+import logging.config
+
 
 class RunStuff:
     
@@ -31,9 +33,31 @@ class RunStuff:
         self.func = self.config_file['func']
         
         # Initiate logger 
-        logging.basicConfig(filename=self.config_file['log_file'], level=logging.DEBUG)
-        self.logger=logging.getLogger(__name__)
+        self.formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(function)s- %(message)s')
         
+        # All logs
+        self.logger = setup_logger(logging.getLogger(__name__), 
+                                   filename=self.config_file['log_file'],
+                                   level = logging.DEBUG)
+        # Log unprocessed files
+        self.logger = setup_logger(""
+        logging.basicConfig(filename=self.config_file['log_file'], level=logging.DEBUG)
+        self.logger=
+        self.logging.config.fileConfig(fname='logger.ini')
+    
+    def setup_logger(name, log_file, level=logging.INFO):
+        """Setup loggers"""
+    
+        handler = logging.FileHandler(log_file)        
+        handler.setFormatter(self.formatter)
+    
+        logger = logging.getLogger(name)
+        logger.setLevel(level)
+        logger.addHandler(handler)
+
+        return logger
+
+
     def make_filelist(self, input_files):
 
         if isinstance(input_files, str):     
@@ -322,7 +346,7 @@ class RunStuff:
     
     def main(self):
         
-        logging.info('New session: ', datetime.now().strftime("%d.%m.%Y_%H.%M"))
+        logging.info('New session...', extra={'function':self.func})
         
         if self.func == "calcSDR":
             self.run_calcSDR()
