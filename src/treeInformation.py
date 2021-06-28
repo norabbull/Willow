@@ -39,7 +39,7 @@ class treeInfo:
         self.setSampleInfo()
         
     def setDistMat(self, dist_mat_file):
-        self.dist_mat = pd.read_csv(dist_mat_file, index_col = 0)
+        self.dist_mat = pd.read_csv(dist_mat_file, index_col = 0, dtype={'a': str})
         
     def setGeneName(self, dist_mat_file):
         """
