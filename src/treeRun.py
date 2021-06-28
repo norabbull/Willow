@@ -13,6 +13,7 @@ import sys
 import os
 from os.path import isfile, join
 from treeMetrics import treeMetrics
+import logging
 
 class RunStuff:
     
@@ -28,6 +29,10 @@ class RunStuff:
                 self.config_file[key] = val.replace('datetime', datetime.now().strftime("%d.%m.%Y_%H.%M"))
         
         self.func = self.config_file['func']
+        
+        # Initiate logger 
+        logging.basicConfig(filename=self.config_file['log_file'], encoding='utf-8', level=logging.DEBUG)
+        self.logger=logging.getLogger(__name__)
         
     def make_filelist(self, input_files):
 
@@ -91,14 +96,17 @@ class RunStuff:
                     writer = csv.writer(f)
                     writer.writerow(subSDR)
 
-        except: 
-            # Write remaining filelist to file
-            print("Disrupted.")
-            print("Last file processed:", dist_file)
+        except Exception: 
+           
+            self.logger.exception(f"Disruption. Last file processed: {dist_file} ", exec_info = True)
+
             
             with open(save_unprocessed, 'w') as f: 
                 write = csv.writer(f) 
-                write.writerow(file_list) 
+                write.writerow(file_list)
+        
+        finally:
+            pass
 
        
     def run_calcSingleSDRs(self, random = False):
@@ -303,11 +311,21 @@ class RunStuff:
     #         # with open(save_unprocessed, 'w') as f: 
     #         #     write = csv.writer(f) 
     #         #     write.writerow(file_list) 
+    
 
-       
-            
+
+    def log(self):
+        logging.basicConfig(filename=self.config_file['log_file'], encoding='utf-8', level=logging.DEBUG)
+        logging.debug('This message should go to the log file')
+        logging.info('So should this')
+        logging.warning('And this, too')
+        logging.error('And non-ASCII stuff, too, like Øresund and Malmö')
+                
+                    
     
     def main(self):
+        
+        logging.info('New session: ', datetime.now().strftime("%d.%m.%Y_%H.%M"))
         
         if self.func == "calcSDR":
             self.run_calcSDR()
@@ -324,6 +342,8 @@ class RunStuff:
             
         else: 
             print("Not a valid option.")
+        
+        logging.info('Session finished: ', datetime.now().strftime("%d.%m.%Y_%H.%M"))
 
 if __name__ == '__main__':
     

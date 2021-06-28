@@ -148,4 +148,17 @@ def load_nullDist(level):
     
     return vals
 
-
+def load_cd_mat(path):
+    """
+    Input:
+        Name: String -  name of gene to find on the form ENSG00000071205___RHG10
+        file_dir: Directory with file  of files 
+    Function. 
+        Read cophenetic distance matrix of a given gene
+    Return: 
+        
+        Distance matrix
+    """
+    
+    cd = pd.read_csv(path, index_col = 0)
+    return cd
