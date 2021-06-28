@@ -60,10 +60,9 @@ class RunStuff:
         ind_len = len(file_list)
             
         print("Files to procescs:\n", file_list)
-        
+  
         for dist_file in file_list:
-            try:
-                
+            try:         
                 dist_file = dist_file.strip()
                 
                 print("File processed: ", dist_file)   # TO DO: convert to log  
@@ -100,14 +99,13 @@ class RunStuff:
 
             except Exception: 
                
-                self.logger.exception(f"Disruption. Last file processed: {dist_file} ")
-            
-                
+                self.logger.exception(f"File disrupted: {dist_file} ")    
                 with open(save_unprocessed, 'w+') as f: 
                     write = csv.writer(f) 
-                    write.writerow(file_list)
+                    write.writerow(dist_file)
                     
                 pass
+        
 
        
     def run_calcSingleSDRs(self, random = False):
