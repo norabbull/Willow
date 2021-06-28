@@ -98,8 +98,8 @@ class RunStuff:
 
         except Exception: 
            
-            self.logger.exception(f"Disruption. Last file processed: {dist_file} ", exec_info = True)
-
+            self.logger.exception(f"Disruption. Last file processed: {dist_file} ")
+        
             
             with open(save_unprocessed, 'w') as f: 
                 write = csv.writer(f) 
