@@ -101,11 +101,10 @@ class RunStuff:
             self.logger.exception(f"Disruption. Last file processed: {dist_file} ")
         
             
-            with open(save_unprocessed, 'w') as f: 
+            with open(save_unprocessed, 'w+') as f: 
                 write = csv.writer(f) 
                 write.writerow(file_list)
         
-        finally:
             pass
 
        
@@ -347,7 +346,8 @@ class RunStuff:
 
 if __name__ == '__main__':
     
-    configFilepath = sys.argv[1]    
+    #configFilepath = sys.argv[1]
+    configFilepath = 'E:/Master/jobs/debug_calcSDRnullDist_28.06.yml'
     run = RunStuff(configFilepath)
     run.main()
     

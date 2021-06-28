@@ -126,14 +126,15 @@ class TestTreeFunctions:
         test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
         pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
     
-        tree = treeInfo()
+        tree = treeMetrics()
         tree.setup(test_gene_small, pop_info)
-        pop_dists = tree.calcPopDists() 
+        tree.calcPopDists() 
+        pop_dists = tree.getPopDists()
         
-        AFR_test = pop_dists['supWithSums']['AFR']; AFR_test[0] = round(AFR_test[0], 6)
-        EUR_test = pop_dists['supBetSums']['EUR']; EUR_test[0] = round(EUR_test[0], 6)
-        LWK_test = pop_dists['subWithSums']['LWK']; LWK_test[0] = round(LWK_test[0], 6)
-        CLM_test = pop_dists['subBetSums']['CLM']; CLM_test[0] = round(CLM_test[0], 6)
+        AFR_test = pop_dists['supWith']['AFR']; AFR_test[0] = round(AFR_test[0], 6)
+        EUR_test = pop_dists['supBet']['EUR']; EUR_test[0] = round(EUR_test[0], 6)
+        LWK_test = pop_dists['subWith']['LWK']; LWK_test[0] = round(LWK_test[0], 6)
+        CLM_test = pop_dists['subBet']['CLM']; CLM_test[0] = round(CLM_test[0], 6)
         
         # Manual calculations retrieved from visual inspection of dist_mat
         supWithSum_AFR = round(0.00236 + 0.00354 + 0.0059 + 0.00472 + 0.00118 + 

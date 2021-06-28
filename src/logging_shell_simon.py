@@ -1,9 +1,15 @@
 import logging
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
+import sys
+import hashlib
+import os
 
-
-
+from datetime import datetime
+from _version import __version__
+from _updated import __updated__
+from _date import __date__
+import logging
 
 
 

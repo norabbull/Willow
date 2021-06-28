@@ -4,15 +4,15 @@ Created on Wed May 12 10:05:17 2021
 @author: norab
 """
 
-from treeInformation.loadTreeData import *
-from treeInformation.getTreeInfo import *
+from inspections.inspectionHelpers import *
+from tsrc.getTreeInfo import *
 from SDR_SDV.calculateSDRandSDV import *
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import re
-from ggplot import  
+
 #%% Load single gene matrix
 
 GNAT2_cd= load_cd_mat('E:/Master/cophenetic_dists/ENSG00000134183___GNAT2___CopD.csv')
@@ -27,6 +27,8 @@ TRY3_cd = load_cd_mat('E:/Master/cophenetic_dists/ENSG00000010438___TRY3___CopD.
 OR6C6_cd = load_cd_mat('E:/Master/cophenetic_dists/ENSG00000188324___OR6C6___CopD.csv')
 MPP5_cd = load_cd_mat('E:/Master/cophenetic_dists/ENSG00000072415___MPP5___CopD.csv')
 LY96_cd = load_cd_mat('E:/Master/cophenetic_dists/ENSG00000154589___LY96___CopD.csv')
+HNRPR_cd = load_cd_mat('E:/Master/cophenetic_dists/ENSG00000282958___HNRPR___CopD.csv')
+
 
 #%% Get all info on one gene
 
