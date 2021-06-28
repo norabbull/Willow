@@ -31,7 +31,7 @@ class RunStuff:
         self.func = self.config_file['func']
         
         # Initiate logger 
-        logging.basicConfig(filename=self.config_file['log_file'], encoding='utf-8', level=logging.DEBUG)
+        logging.basicConfig(filename=self.config_file['log_file'], level=logging.DEBUG)
         self.logger=logging.getLogger(__name__)
         
     def make_filelist(self, input_files):
