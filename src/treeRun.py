@@ -61,10 +61,10 @@ class RunStuff:
             
         print("Files to procescs:\n", file_list)
         
-        while file_list:
+        for dist_file in file_list:
             try:
             
-                dist_file = file_list.pop().strip()
+                dist_file = dist_file.strip()
                 
                 print("File processed: ", dist_file)   # TO DO: convert to log  
                 print(f"Number: {ind} / {ind_len}")
