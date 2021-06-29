@@ -14,8 +14,8 @@ from geneTree.treeMetrics import treeMetrics
 from datetime import datetime
 
 
-test_gene_small = 'C:\\Users\\norab\\Master\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
-pop_info = 'C:/Users/norab/Master/Data/real_tree_data/phydist_population_classes.tsv'
+test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
+pop_info = '    \n    C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
 
 test_files = {'pop_info': pop_info,
            'dist_mat':test_gene_small}
@@ -26,10 +26,5 @@ dist_mat = tree.getDistMat()
 sample_info = tree.getSampleInfo()
 # Understand iteration of upper matrix
 dist_mat = dist_mat.to_numpy()
-len(dist_mat-1)
-len(dist_mat-1)
-len(dist_mat)-1
-dist_mat = pd.read_csv(dist_mat_file, index_col = 0)
-tree.sample_info
-tree.shuffleSampleInfo()        
-tree.sample_info
+
+k = test_files.get('pop_info').strip()
