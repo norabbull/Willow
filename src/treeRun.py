@@ -15,14 +15,14 @@ from os.path import isfile, join
 from treeMetrics import treeMetrics
 import logging
 import logging.config
-
+from configparser import ConfigParser
 
 class RunStuff:
     
     def __init__(self, configFilepath):
         
+        # Load config arguments
         configFilepath = configFilepath.strip()
-        
         with open(configFilepath, 'r') as c:
             self.config_file = yaml.safe_load(c)
             
@@ -30,33 +30,53 @@ class RunStuff:
             if 'datetime' in val: 
                 self.config_file[key] = val.replace('datetime', datetime.now().strftime("%d.%m.%Y_%H.%M"))
         
+        # Set function to run
         self.func = self.config_file['func']
         
         # Initiate logger 
-        self.formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(function)s- %(message)s')
+        self.logger_details = self.read_config(self.config_file['log_config'], self.config_file['LOGGER_SECTION'])
         
-        # All logs
-        self.logger = setup_logger(logging.getLogger(__name__), 
-                                   filename=self.config_file['log_file'],
-                                   level = logging.DEBUG)
-        # Log unprocessed files
-        self.logger = setup_logger(""
-        logging.basicConfig(filename=self.config_file['log_file'], level=logging.DEBUG)
-        self.logger=
-        self.logging.config.fileConfig(fname='logger.ini')
-    
-    def setup_logger(name, log_file, level=logging.INFO):
-        """Setup loggers"""
-    
-        handler = logging.FileHandler(log_file)        
-        handler.setFormatter(self.formatter)
-    
-        logger = logging.getLogger(name)
-        logger.setLevel(level)
-        logger.addHandler(handler)
+    def read_config(self,file_path,section):
+        """
+        The function to read the configuration parameters from the relevant section in the config file.
+        Parameters returned in dictionary. 
+        
+        :param file_path: the name of the file that will be read.
+        :param section: The section of the file has to be read.
+        :return section_content: Dictionary with the section parameters.
+        :rtype: Dictionary
+        
+        code taken from: https://medium.com/analytics-vidhya/config-files-and-logging-a7b4cc377fd5
+        """
+        
+        # create parser and read configuration file         
+        parser = ConfigParser()
+        parser.read(file_path)
+                
+        section_content = {}
+        if parser.has_section(section):
+            items = parser.items(section)
+            for item in items:
+                section_content[item[0]] = item[1]
+        else:
+            raise Exception('Error in fetching config in read_config method. {0} not found in \
+            {1}'.format(section, file_path))
 
-        return logger
-
+        return section_content
+    
+    def set_logging_basics(self):
+        """
+        The function to set the logging information.
+        :param config_dict: dictionary with details of configuration
+        :return: None
+        """
+        folder = self.config_dict.get('folder')
+        file = self.config_dict.get('file')
+        level = self.config_dict.get('level')
+        logging.basicConfig(filename=folder + file
+                            , filemode='w'
+                            , format='%(name)s - %(levelname)s - %(message)s'
+                            , level=level)
 
     def make_filelist(self, input_files):
 
@@ -334,16 +354,6 @@ class RunStuff:
     #         #     write.writerow(file_list) 
     
 
-
-    def log(self):
-        logging.basicConfig(filename=self.config_file['log_file'], encoding='utf-8', level=logging.DEBUG)
-        logging.debug('This message should go to the log file')
-        logging.info('So should this')
-        logging.warning('And this, too')
-        logging.error('And non-ASCII stuff, too, like Øresund and Malmö')
-                
-                    
-    
     def main(self):
         
         logging.info('New session...', extra={'function':self.func})
@@ -372,8 +382,8 @@ if __name__ == '__main__':
     #configFilepath = 'E:/Master/jobs/debug_calcSDRnullDist_28.06.yml'
     
     configFilepath = sys.argv[1]
-    
     run = RunStuff(configFilepath)
+
     run.main()
     
     
