@@ -1,0 +1,15 @@
+---
+ func: 'calcTest'								# Function to run
+ 
+ input_dists: 'E:/Master/cophenetic_dists/'     				# Directory of distance matrix files
+ input_pop_info: 'E:/Master/otherTreeData/phydist_population_classes.tsv'	# Population information file
+ input_config_folder: 'E:/Master/jobs_template/configs'				# Log configuration file
+ input_log_config = 'config.ini'
+ 
+ output_folder: 'E:/Master/jobs_template/job_output/'				# Folder for run outputs
+ output_log: 'log_SDRnullDist_datetime.log'					# Log file (created)
+ output_SDRsuper: 'nullDistSDRsuper_datetime.csv'				# SDR values for super-populations (created)
+ output_SDRsub: 'nullDistSDRsub_datetime.csv'					# SDR values for sub-populations (created)
+ output_unprocessed: 'unprocessed_files_nullDistSDRcalc_datetime.csv'	 	# Save list of unprocessed files upon disruption
+
+ LOGGER_SECTION = 'Logger'							# Logger argument

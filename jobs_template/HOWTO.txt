@@ -1,0 +1,14 @@
+
+How to run a program: 
+
+All programs are run through exexcution of treeRun.py.
+The function to run is specified in the yaml configuration file.
+The path to this config file is given as the only argument upon execution. 
+The execution happens through running the shell script "run_[func].sh".
+
+It is therefore, upon every exectution, important to check the following: 
+ 1. All paths in the main_config_[func].yml config file are correct.
+ 2. The correct main_config_[func].yml file is given in the shell script.
+
+Folder structure for each job should be consistent, following the template structure. 
+Additional parameters in the main_config_[func].yml file may occur for particular functions.
