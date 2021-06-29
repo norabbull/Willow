@@ -28,10 +28,6 @@ def main(argv=None):
 
 
 
-
-
-
-
 def initLogger(md5string):
     
     ''' setup log file based on project name'''
