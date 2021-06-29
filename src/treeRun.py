@@ -31,7 +31,7 @@ class RunStuff:
                 self.config_file[key] = val.replace('datetime', datetime.now().strftime("%d.%m.%Y_%H.%M"))
         
         # Set function to run
-        self.func = self.config_file['func']
+        self.func = self.config_file.get('func')
         
         # Initiate logger 
         self.logger_details = self.read_config(self.config_file['log_config'], self.config_file['LOGGER_SECTION'])
@@ -73,8 +73,9 @@ class RunStuff:
         folder = self.config_dict.get('folder')
         file = self.config_dict.get('file')
         level = self.config_dict.get('level')
-        logging.basicConfig(filename=folder + file
-                            , filemode='w'
+        func = self.config_file.get('func')
+        self.logging.basicConfig(filename=folder + file
+                            , filemode='w+'
                             , format='%(name)s - %(levelname)s - %(message)s'
                             , level=level)
 
@@ -87,16 +88,11 @@ class RunStuff:
         
     def run_calcSDR(self, random=False):
         
-        input_files = self.config_file['input_files']
-        input_files = input_files.strip()
-        pop_info = self.config_file['pop_info']
-        pop_info = pop_info.strip()
-        SDRsuper_output = self.config_file['SDRsuper_output']
-        SDRsuper_output = SDRsuper_output.strip()
-        SDRsub_output = self.config_file['SDRsub_output']
-        SDRsub_output = SDRsub_output.strip()
-        save_unprocessed = self.config_file['save_unprocessed']
-        save_unprocessed = save_unprocessed.strip()
+        input_files = self.config_file.get('input_files').strip()
+        pop_info = self.config_file.get('pop_info').strip()
+        SDRsuper_output = self.config_file.get('SDRsuper_output').strip()
+        SDRsub_output = self.config_file.get('SDRsub_output').strip()
+        save_unprocessed = self.config_file.get('save_unprocessed').strip()
             
         file_list = self.make_filelist(input_files)
             
@@ -164,10 +160,10 @@ class RunStuff:
             
         """
 
-        input_files = self.config_file['input_files']
-        pop_info = self.config_file['pop_info']
-        SSDR_output_dir = self.config_file['SSDR_output_dir']
-        save_unprocessed = self.config_file['save_unprocessed']
+        input_files = self.config_file.get('input_files')
+        pop_info = self.config_file.get('input_pop_info')
+        SSDR_output_dir = self.config_file.get('output_SSDR')
+        save_unprocessed = self.config_file.get('output_unprocessed')
                
         file_list = self.make_filelist(input_files)
 
@@ -205,14 +201,15 @@ class RunStuff:
                 
                 ind +=1
                 
-        except: 
-            # Write remaining filelist to file
-            print("Disrupted.")
-            print("Last file processed:", dist_file)
-            
-            with open(save_unprocessed, 'w') as f: 
+
+        except Exception: 
+           
+            self.logger.exception(f"File disrupted: {dist_file} ")    
+            with open(save_unprocessed, 'w+') as f: 
                 write = csv.writer(f) 
-                write.writerow(file_list) 
+                write.writerow(dist_file)
+                
+            pass
 
        
     def run_calcSDV(self, random = False):
@@ -233,12 +230,11 @@ class RunStuff:
         Output: 
             Writes SDR to file.         
         """
-        
-        input_files = self.config_file['input_files']
-        pop_info = self.config_file['pop_info']
-        SDVsuper_output = self.config_file['SDVsuper_output']
-        SDVsub_output = self.config_file['SDVsub_output']
-        save_unprocessed = self.config_file['save_unprocessed']
+        input_files = self.config_file.get('input_files').strip()
+        pop_info = self.config_file.get('input_pop_info').strip()
+        SDVsuper_output = self.config_file.get('output_SDRsuper').strip()
+        SDVsub_output = self.config_file.get('output_SDRsub').strip()
+        save_unprocessed = self.config_file.get('output_unprocessed').strip()
             
         file_list = self.make_filelist(input_files)
 
@@ -273,11 +269,11 @@ class RunStuff:
                 supSDV = [tree.getGeneName(), supSDV]
                 subSDV = [tree.getGeneName(), subSDV]
         
-                with open(SDVsuper_output, 'a', newline='') as f:   # write to file    
+                with open(SDVsuper_output, 'w+', newline='') as f:   # write to file    
                     writer = csv.writer(f)
                     writer.writerow(supSDV)
                     
-                with open(SDVsub_output, 'a', newline='') as f:   # write to file    
+                with open(SDVsub_output, 'w+', newline='') as f:   # write to file    
                     writer = csv.writer(f)
                     writer.writerow(subSDV)
                 
@@ -286,24 +282,26 @@ class RunStuff:
             print("Disrupted.")
             print("Last file processed:", dist_file)
             
-            with open(save_unprocessed, 'w') as f: 
+            with open(save_unprocessed, 'w+') as f: 
                 write = csv.writer(f) 
                 write.writerow(file_list) 
 
        
     def run_calcTest(self):
+        """
+        Test function to check functionality of program.
+        """
 
-        input_files = self.config_file['input_files']
-        pop_info = self.config_file['pop_info']
-        test_output = self.config_file['test_output']
-        save_unprocessed = self.config_file['save_unprocessed']
+        input_files = self.config_file.get('input_files').strip()
+        pop_info = self.config_file.get('input_pop_info').strip()
+        measure_output = self.config_file.get('output_measure').strip()
+        save_unprocessed = self.config_file.get('output_unprocessed').strip()
             
         file_list = self.make_filelist(input_files)
         
         print("File list: ")
         print(file_list)
-          
-        
+
         dist_file = file_list.pop().strip()
         print("File processed: ", dist_file)   # TO DO: convert to log  
 
@@ -311,6 +309,13 @@ class RunStuff:
         tree.setup(dist_file, pop_info)
         print("Gene name: ", tree.getGeneName())
         print("Sample info: ", tree.getSampleInfo())
+        
+        rand_num = 15.05
+        
+        with open(measure_output, 'w+', newline='') as f:   # write to file    
+            writer = csv.writer(f)
+            writer.writerow(rand_num)
+        
         
 
         
@@ -365,14 +370,14 @@ class RunStuff:
         elif self.func == "calcSingleSDRs":
             self.run_calcSingleSDRs()
         elif self.func == "calcNullSDR":
-            num_rand_trees = int(self.config_file['num_rand_trees'])
+            num_rand_trees = int(self.config_file.get('num_rand_trees'))
             for _ in range(num_rand_trees):
                 self.run_calcSDR(random = True)
         elif self.func == "calcTest":
             self.run_calcTest()
             
-        else: 
-            print("Not a valid option.")
+        else:
+            self.logger.error("Not a valid option.")
         
         logging.info('Session finished: ', datetime.now().strftime("%d.%m.%Y_%H.%M"))
 
