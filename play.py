@@ -15,7 +15,7 @@ from datetime import datetime
 
 
 test_gene_small = 'C:\\Users\\norab\\MasterDisaster\\Data\\real_tree_data\\dist_mat_test\\FGR_10x10.csv'
-pop_info = 'C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
+pop_info = '    \n    C:/Users/norab/MasterDisaster/Data/real_tree_data/phydist_population_classes.tsv'
 
 test_files = {'pop_info': pop_info,
            'dist_mat':test_gene_small}
@@ -27,3 +27,4 @@ sample_info = tree.getSampleInfo()
 # Understand iteration of upper matrix
 dist_mat = dist_mat.to_numpy()
 
+k = test_files.get('pop_info').strip()
